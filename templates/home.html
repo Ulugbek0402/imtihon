@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>FinanceHome</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        body { background-color: #f0f2f5; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        .sidebar {
+            width: 260px;
+            height: 100vh;
+            position: fixed;
+            background: #ffffff;
+            border-right: 1px solid #e0e0e0;
+            padding: 30px 20px;
+        }
+        .main-content { margin-left: 260px; padding: 40px; }
+        .nav-link { color: #555; padding: 12px; border-radius: 10px; margin-bottom: 5px; font-weight: 500; }
+        .nav-link:hover, .nav-link.active { background: #e7f0ff; color: #0d6efd; }
+        .card-custom { border: none; border-radius: 20px; box-shadow: 0 10px 30px rgba(0,0,0,0.03); background: #fff; transition: 0.3s; }
+        .card-custom:hover { transform: translateY(-5px); }
+        .gradient-box {
+            background: linear-gradient(135deg, #0d6efd 0%, #00d4ff 100%);
+            color: white;
+            padding: 30px;
+            border-radius: 25px;
+        }
+    </style>
+</head>
+<body>
+
+<div class="sidebar">
+    <h4 class="fw-bold text-primary mb-5">💰 FinanceHome</h4>
+    <ul class="nav flex-column">
+        <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}">Home</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Transactions</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Budgets</a></li>
+        <li class="nav-item"><a class="nav-link" href="#">Goals</a></li>
+        <li class="nav-item"><a class="nav-link" href="/admin/">Admin Panel</a></li>
+    </ul>
+</div>
+
+<div class="main-content">
+    <div class="d-flex justify-content-between align-items-center mb-5">
+        <h2 class="fw-bold">My Overview</h2>
+        <div class="bg-white p-2 rounded-pill shadow-sm">
+            {% for curr in all_currencies %}
+            <a href="?currency={{ curr.code }}"
+               class="btn rounded-pill px-4 {% if selected_currency.code == curr.code %}btn-primary{% else %}btn-light{% endif %}">
+                {{ curr.code }}
+            </a>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row g-4 mb-5">
+        <div class="col-lg-5">
+            <div class="gradient-box shadow">
+                <p class="mb-1 opacity-75">Combined Total Balance</p>
+                <h1 class="display-5 fw-bold">{{ total|floatformat:2 }} {{ selected_currency.code }}</h1>
+                <p class="mt-4 mb-0 small"><span class="bg-white bg-opacity-25 p-1 rounded">Live Rates</span></p>
+            </div>
+        </div>
+        <div class="col-lg-7">
+            <div class="card card-custom p-4 h-100">
+                <h5 class="fw-bold mb-4">Spending Breakdown (%)</h5>
+                <div style="height: 200px;">
+                    <canvas id="expenseChart"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="row g-4">
+        <div class="col-lg-8">
+            <div class="card card-custom p-4">
+                <h5 class="fw-bold mb-4">Accounts</h5>
+                <div class="table-responsive">
+                    <table class="table table-borderless align-middle">
+                        <thead><tr class="text-muted small"><th>NAME</th><th>TYPE</th><th class="text-end">BALANCE</th></tr></thead>
+                        <tbody>
+                            {% for acc in accounts %}
+                            <tr style="border-bottom: 1px solid #f8f9fa;">
+                                <td class="fw-bold">{{ acc.name }}</td>
+                                <td><span class="badge bg-secondary-subtle text-secondary">{{ acc.type }}</span></td>
+                                <td class="text-end fw-bold text-primary">{{ acc.balance }} {{ acc.currency.code }}</td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-4">
+            <div class="card card-custom p-4">
+                <h5 class="fw-bold mb-4">Savings Goals</h5>
+                {% for goal in goals %}
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between small mb-2">
+                        <span class="fw-bold">{{ goal.title }}</span>
+                        <span class="text-muted">{{ goal.current_amount|floatformat:0 }} / {{ goal.target_amount|floatformat:0 }}</span>
+                    </div>
+                    <div class="progress" style="height: 10px; border-radius: 10px;">
+                        <div class="progress-bar bg-primary shadow-sm" style="width: 60%"></div>
+                    </div>
+                </div>
+                {% empty %}
+                <div class="text-center text-muted py-4">No goals added yet.</div>
+                {% endfor %}
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    const ctx = document.getElementById('expenseChart').getContext('2d');
+    new Chart(ctx, {
+        type: 'doughnut',
+        data: {
+            labels: {{ chart_labels|safe }},
+            datasets: [{
+                data: {{ chart_data|safe }},
+                backgroundColor: ['#0d6efd', '#00d4ff', '#ffc107', '#198754', '#dc3545'],
+                borderWidth: 0,
+                hoverOffset: 10
+            }]
+        },
+        options: {
+            maintainAspectRatio: false,
+            plugins: {
+                legend: { position: 'right', labels: { usePointStyle: true, padding: 20 } }
+            }
+        }
+    });
+</script>
+
+</body>
+</html>
