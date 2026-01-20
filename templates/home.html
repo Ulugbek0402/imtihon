@@ -3,64 +3,92 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>FinanceHome | Dashboard</title>
+    <title>FinanceHome | Smart Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
-        body { background-color: #f8f9fa; font-family: 'Inter', sans-serif; }
-        .sidebar { width: 260px; height: 100vh; position: fixed; background: #fff; border-right: 1px solid #eee; padding: 30px 20px; display: flex; flex-direction: column; z-index: 1000; }
-        .main-content { margin-left: 260px; padding: 40px; }
-        .nav-link { color: #666; padding: 12px; border-radius: 12px; margin-bottom: 5px; font-weight: 500; transition: 0.3s; }
-        .nav-link:hover { background: #f1f3f5; color: #0d6efd; }
-        .nav-link.active { background: #0d6efd; color: #fff !important; }
-        .card-custom { border: none; border-radius: 24px; box-shadow: 0 4px 20px rgba(0,0,0,0.05); }
-        .gradient-box { background: linear-gradient(135deg, #0d6efd 0%, #00d4ff 100%); color: white; padding: 35px; border-radius: 28px; transition: transform 0.3s; }
-        .form-control-custom { background: #f1f3f5; border: none; border-radius: 12px; padding: 12px; }
-        .progress { height: 12px; border-radius: 10px; background-color: #e9ecef; }
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+        body { background-color: #f4f7fe; font-family: 'Inter', sans-serif; color: #2d3748; }
+
+        .sidebar { width: 280px; height: 100vh; position: fixed; background: #fff; border-right: 1px solid #e2e8f0; padding: 35px 24px; display: flex; flex-direction: column; z-index: 1000; }
+        .nav-link { color: #718096; padding: 14px 18px; border-radius: 16px; margin-bottom: 8px; font-weight: 500; transition: all 0.3s ease; display: flex; align-items: center; text-decoration: none; }
+        .nav-link i { font-size: 1.2rem; margin-right: 12px; }
+        .nav-link:hover { background: #f7fafc; color: #3182ce; transform: translateX(5px); }
+        .nav-link.active { background: #3182ce; color: #fff !important; box-shadow: 0 10px 15px -3px rgba(49, 130, 206, 0.3); }
+
+        .main-content { margin-left: 280px; padding: 40px; }
+        .card-custom { border: none; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); background: #fff; }
+
+        .gradient-box { background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%); color: white; padding: 40px; border-radius: 35px; position: relative; overflow: hidden; }
+        .btn-action { border-radius: 15px; padding: 10px 20px; font-weight: 600; font-size: 0.9rem; border: none; transition: all 0.2s; display: flex; align-items: center; }
+        .btn-action:hover { transform: translateY(-2px); box-shadow: 0 5px 15px rgba(0,0,0,0.1); }
+
+        .form-control-custom { background: #f7fafc; border: 2px solid #edf2f7; border-radius: 15px; padding: 12px 18px; transition: 0.2s; }
+        .form-control-custom:focus { background: #fff; border-color: #3182ce; box-shadow: none; outline: none; }
+
+        .account-card { border: 2px solid transparent; transition: all 0.3s ease; background: #f8fafc; border-radius: 20px; padding: 20px; }
+        .account-card:hover { border-color: #3182ce; background: #fff; transform: translateY(-5px); box-shadow: 0 10px 20px rgba(0,0,0,0.05); }
+
+        .progress { height: 10px; border-radius: 20px; background-color: #edf2f7; }
+        .modal-content { border: none; border-radius: 30px; padding: 10px; }
     </style>
 </head>
 <body>
 
 <div class="sidebar">
-    <h4 class="fw-bold text-primary mb-5 px-2"><i class="bi bi-wallet2 me-2"></i>FinanceHome</h4>
+    <div class="d-flex align-items-center mb-5 px-2">
+        <div class="bg-primary text-white rounded-3 p-2 me-3"><i class="bi bi-wallet2 fs-4"></i></div>
+        <h4 class="fw-bold text-dark mb-0">FinanceHome</h4>
+    </div>
     <ul class="nav flex-column mb-auto">
-        <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}"><i class="bi bi-speedometer2 me-2"></i> Dashboard</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'history' %}"><i class="bi bi-clock-history me-2"></i> Transactions</a></li>
-        <li class="nav-item"><a class="nav-link" href="{% url 'budget_list' %}"><i class="bi bi-pie-chart me-2"></i> Budgets</a></li>
+        <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'history' %}"><i class="bi bi-arrow-left-right"></i> Transactions</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'goals_history' %}"><i class="bi bi-flag-fill"></i> Goals History</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'budget_list' %}"><i class="bi bi-pie-chart"></i> Budgets</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'change_password' %}"><i class="bi bi-shield-lock"></i> Security</a></li>
     </ul>
     <div class="mt-auto">
-        <a class="nav-link text-danger fw-bold border-top pt-3" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right me-2"></i> Logout</a>
+        <a class="nav-link text-danger fw-bold" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a>
     </div>
 </div>
 
 <div class="main-content">
     {% if messages %}
-        <div class="mb-4">
-            {% for message in messages %}
-                <div class="alert alert-{% if message.tags == 'error' %}danger{% elif message.tags == 'warning' %}warning{% else %}primary{% endif %} alert-dismissible fade show border-0 shadow-sm rounded-pill px-4" role="alert">
-                    {{ message }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-                </div>
-            {% endfor %}
-        </div>
+        {% for message in messages %}
+            <div class="alert alert-{% if message.tags == 'error' %}danger{% else %}primary{% endif %} alert-dismissible fade show border-0 shadow-sm rounded-4 px-4 mb-4" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+            </div>
+        {% endfor %}
     {% endif %}
 
-    <div class="d-flex justify-content-between align-items-center mb-5">
-        <div><h2 class="fw-bold">Financial Overview</h2><p class="text-muted mb-0">Welcome, {{ request.user.email }}</p></div>
-        <div class="d-flex gap-2">
-            <button class="btn btn-success rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addGoalModal">+ Goal</button>
-            <button class="btn btn-outline-dark rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addBudgetModal">+ Budget</button>
-            <button class="btn btn-dark rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addAccountModal">+ Account</button>
-            <button class="btn btn-primary rounded-pill px-4" data-bs-toggle="modal" data-bs-target="#addTransactionModal">+ Transaction</button>
+    <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-5 gap-3">
+        <div>
+            <h2 class="fw-bold text-dark">Smart Dashboard</h2>
+            <p class="text-muted mb-0">Manage your wealth and spending habits</p>
+        </div>
+        <div class="d-flex flex-wrap gap-2">
+            <button class="btn btn-action btn-light shadow-sm" data-bs-toggle="modal" data-bs-target="#addGoalModal">
+                <span class="text-success fw-bold me-1">+</span> <i class="bi bi-flag text-success me-2"></i> Goal
+            </button>
+            <button class="btn btn-action btn-light shadow-sm" data-bs-toggle="modal" data-bs-target="#addBudgetModal">
+                <span class="text-warning fw-bold me-1">+</span> <i class="bi bi-pie-chart text-warning me-2"></i> Budget
+            </button>
+            <button class="btn btn-action btn-light shadow-sm" data-bs-toggle="modal" data-bs-target="#addAccountModal">
+                <span class="text-info fw-bold me-1">+</span> <i class="bi bi-credit-card text-info me-2"></i> Account
+            </button>
+            <button class="btn btn-action btn-primary shadow" data-bs-toggle="modal" data-bs-target="#addTransactionModal">
+                <span class="fw-bold me-2">+</span> Transaction
+            </button>
         </div>
     </div>
 
     <div class="row g-4 mb-4">
         <div class="col-lg-7">
-            <div class="gradient-box shadow">
-                <p class="mb-1 opacity-75">Net Worth</p>
-                <h1 class="display-4 fw-bold mb-4">{{ total|floatformat:2 }} {{ selected_currency.code }}</h1>
+            <div class="gradient-box shadow-lg h-100 d-flex flex-column justify-content-center">
+                <p class="text-white-50 fw-medium mb-1">Total Net Worth</p>
+                <h1 class="display-4 fw-bold mb-4 text-white">{{ total|floatformat:2 }} {{ selected_currency.code }}</h1>
                 <div class="d-flex flex-wrap gap-2">
                     {% for curr in all_currencies %}
                     <a href="?currency={{ curr.code }}" class="btn btn-sm {% if selected_currency.code == curr.code %}btn-light text-primary{% else %}btn-outline-light{% endif %} rounded-pill px-4 py-2 fw-bold">{{ curr.code }}</a>
@@ -69,192 +97,222 @@
             </div>
         </div>
         <div class="col-lg-5">
-            <div class="card card-custom p-4 h-100 text-center">
-                <h6 class="fw-bold mb-4 text-start">Expense Distribution</h6>
-                {% if chart_data %}
-                    <div style="height: 200px;"><canvas id="expenseChart"></canvas></div>
-                {% else %}
-                    <div class="py-5 text-muted small">No expenses yet to show chart.</div>
-                {% endif %}
+            <div class="card card-custom p-4 h-100">
+                <h6 class="fw-bold mb-4 d-flex align-items-center"><i class="bi bi-graph-up me-2 text-primary"></i>Spending Analysis</h6>
+                <div style="height: 220px;"><canvas id="expenseChart"></canvas></div>
             </div>
         </div>
     </div>
 
-    <div class="row g-4 mb-4">
+    <div class="card card-custom p-4 mb-4">
+        <div class="d-flex justify-content-between align-items-center mb-4">
+            <h5 class="fw-bold mb-0">Mening hisoblarim</h5>
+            <span class="badge bg-primary-soft text-primary rounded-pill">{{ accounts|length }} ta hisob</span>
+        </div>
+        <div class="row g-3">
+            {% for acc in accounts %}
+            <div class="col-md-4 col-lg-3">
+                <div class="account-card shadow-sm">
+                    <div class="d-flex align-items-center mb-3">
+                        <div class="bg-primary text-white rounded-3 p-2 me-3">
+                            <i class="bi bi-credit-card-2-back"></i>
+                        </div>
+                        <h6 class="fw-bold mb-0 text-truncate">{{ acc.name }}</h6>
+                    </div>
+                    <div class="mb-1 text-muted small">Joriy balans</div>
+                    <h4 class="fw-bold mb-0">{{ acc.balance|floatformat:2 }} <span class="small">{{ acc.currency.code }}</span></h4>
+                </div>
+            </div>
+            {% empty %}
+            <div class="col-12 text-center py-4">
+                <i class="bi bi-wallet2 display-4 text-light mb-3 d-block"></i>
+                <p class="text-muted">Hisoblar mavjud emas. Yangi hisob qo'shing.</p>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <div class="row g-4">
         <div class="col-lg-6">
-            <div class="card card-custom p-4 border-0 shadow-sm h-100">
-                <h5 class="fw-bold mb-4"><i class="bi bi-pie-chart-fill me-2 text-warning"></i>Monthly Budgets</h5>
+            <div class="card card-custom p-4 h-100">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold mb-0">Monthly Budgets</h5>
+                    <a href="{% url 'budget_list' %}" class="btn btn-sm btn-light rounded-pill px-3">View All</a>
+                </div>
                 {% for b in budgets %}
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-bold text-muted small">{{ b.info.category }}</span>
-                        <span class="fw-bold small">{{ b.spent|floatformat:0 }} / {{ b.info.amount_limit|floatformat:0 }}</span>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="fw-semibold">{{ b.info.category }}</span>
+                        <span class="small text-muted">{{ b.spent|floatformat:0 }} / {{ b.info.amount_limit|floatformat:0 }} {{ b.info.currency.code }}</span>
                     </div>
-                    <div class="progress">
-                        <div class="progress-bar {% if b.percent > 100 %}bg-danger{% else %}bg-warning{% endif %}" style="width: {{ b.percent }}%"></div>
-                    </div>
+                    <div class="progress"><div class="progress-bar {% if b.percent > 100 %}bg-danger{% else %}bg-warning{% endif %}" style="width: {{ b.percent|default:0 }}%"></div></div>
                 </div>
                 {% empty %}
-                <p class="text-center text-muted py-4">No budgets set.</p>
+                <p class="text-center text-muted py-4">No active budgets</p>
                 {% endfor %}
             </div>
         </div>
         <div class="col-lg-6">
-            <div class="card card-custom p-4 border-0 shadow-sm h-100">
+            <div class="card card-custom p-4 h-100">
                 <div class="d-flex justify-content-between align-items-center mb-4">
-                    <h5 class="fw-bold mb-0"><i class="bi bi-flag-fill me-2 text-success"></i>Goals</h5>
-                    <button class="btn btn-sm btn-light rounded-pill" data-bs-toggle="modal" data-bs-target="#contributeGoalModal">Contribute</button>
+                    <h5 class="fw-bold mb-0">Saving Goals</h5>
+                    <button class="btn btn-sm btn-success rounded-pill px-3" data-bs-toggle="modal" data-bs-target="#contributeGoalModal">Contribute</button>
                 </div>
                 {% for goal in goals %}
-                <div class="mb-3">
-                    <div class="d-flex justify-content-between mb-1">
-                        <span class="fw-bold">{{ goal.title }}</span>
-                        <span class="text-success fw-bold">{{ goal.get_progress_percent }}%</span>
+                <div class="mb-4">
+                    <div class="d-flex justify-content-between mb-2">
+                        <span class="fw-semibold">{{ goal.title }}</span>
+                        <span class="text-success fw-bold small">{{ goal.get_progress_percent }}%</span>
                     </div>
-                    <div class="progress">
-                        <div class="progress-bar bg-success" style="width: {{ goal.get_progress_percent }}%"></div>
-                    </div>
+                    <div class="progress"><div class="progress-bar bg-success" style="width: {{ goal.get_progress_percent }}%"></div></div>
                 </div>
                 {% empty %}
-                <p class="text-center text-muted py-4">No goals created yet.</p>
+                <p class="text-center text-muted py-4">No goals yet</p>
                 {% endfor %}
             </div>
         </div>
     </div>
+</div>
 
-    <div class="card card-custom p-4 border-0 shadow-sm">
-        <h5 class="fw-bold mb-4">Accounts</h5>
-        <div class="table-responsive">
-            <table class="table table-hover align-middle">
-                <thead class="table-light"><tr><th>Name</th><th>Currency</th><th class="text-end">Balance</th></tr></thead>
-                <tbody>
-                    {% for acc in accounts %}
-                    <tr><td class="fw-bold">{{ acc.name }}</td><td><span class="badge bg-primary-subtle text-primary rounded-pill">{{ acc.currency.code }}</span></td><td class="text-end fw-bold">{{ acc.balance|floatformat:2 }}</td></tr>
-                    {% empty %}
-                    <tr><td colspan="3" class="text-center text-muted">No accounts found.</td></tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
+<div class="modal fade" id="addGoalModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{% url 'add_goal' %}" class="modal-content">
+            {% csrf_token %}
+            <div class="modal-header border-0"><h5 class="fw-bold">New Goal</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-3"><label class="small fw-bold mb-2">Title</label><input type="text" name="title" class="form-control form-control-custom" required></div>
+                <div class="mb-3"><label class="small fw-bold mb-2">Target Amount</label><input type="number" name="target" class="form-control form-control-custom" required></div>
+                <div class="mb-3">
+                    <label class="small fw-bold mb-2">Currency</label>
+                    <select name="currency" class="form-select form-control-custom">
+                        {% for curr in all_currencies %}<option value="{{ curr.id }}">{{ curr.code }}</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer border-0"><button type="submit" class="btn btn-primary w-100 py-3 rounded-4 shadow">Add Goal</button></div>
+        </form>
     </div>
 </div>
 
-<div class="modal fade" id="addGoalModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="addBudgetModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow" style="border-radius: 24px;">
-            <div class="modal-header border-0 px-4 pt-4"><h5 class="fw-bold">Create New Goal</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <form action="{% url 'add_goal' %}" method="POST">
-                {% csrf_token %}
-                <div class="modal-body px-4">
-                    <input type="text" name="title" class="form-control form-control-custom mb-3" placeholder="Goal Title (e.g. Dream House)" required>
-                    <div class="row">
-                        <div class="col-6"><input type="number" name="target" class="form-control form-control-custom" placeholder="Target Sum" step="0.01" required></div>
-                        <div class="col-6"><select name="currency" class="form-select form-control-custom">{% for curr in all_currencies %}<option value="{{ curr.id }}">{{ curr.code }}</option>{% endfor %}</select></div>
+        <form method="POST" action="{% url 'add_budget' %}" class="modal-content">
+            {% csrf_token %}
+            <div class="modal-header border-0"><h5 class="fw-bold">Set Budget Plan</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="small fw-bold mb-2">Budget Type</label>
+                    <select name="name" class="form-select form-control-custom" required>
+                        <option value="MONTHLY">Monthly</option>
+                        <option value="STIPEND">Stipend</option>
+                        <option value="OTHER">Other</option>
+                    </select>
+                </div>
+                <div class="mb-3"><label class="small fw-bold mb-2">Category</label><input type="text" name="category" class="form-control form-control-custom" placeholder="e.g. Food" required></div>
+                <div class="mb-3"><label class="small fw-bold mb-2">Limit Amount</label><input type="number" name="limit" class="form-control form-control-custom" required></div>
+                <div class="mb-3">
+                    <label class="small fw-bold mb-2">Currency</label>
+                    <select name="currency" class="form-select form-control-custom">
+                        {% for curr in all_currencies %}<option value="{{ curr.id }}">{{ curr.code }}</option>{% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer border-0"><button type="submit" class="btn btn-warning text-white w-100 py-3 rounded-4 shadow">Set Budget</button></div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="addAccountModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{% url 'add_account' %}" class="modal-content">
+            {% csrf_token %}
+            <div class="modal-header border-0"><h5 class="fw-bold">Connect Account</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-3"><label class="small fw-bold mb-2">Account Name</label><input type="text" name="name" class="form-control form-control-custom" required></div>
+                <div class="mb-3">
+                    <label class="small fw-bold mb-2">Currency</label>
+                    <select name="currency" class="form-select form-control-custom">
+                        {% for curr in all_currencies %}<option value="{{ curr.id }}">{{ curr.code }}</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="mb-3"><label class="small fw-bold mb-2">Current Balance</label><input type="number" name="balance" class="form-control form-control-custom" value="0"></div>
+            </div>
+            <div class="modal-footer border-0"><button type="submit" class="btn btn-info text-white w-100 py-3 rounded-4 shadow">Add Account</button></div>
+        </form>
+    </div>
+</div>
+
+<div class="modal fade" id="addTransactionModal" tabindex="-1">
+    <div class="modal-dialog modal-dialog-centered">
+        <form method="POST" action="{% url 'add_transaction' %}" class="modal-content">
+            {% csrf_token %}
+            <div class="modal-header border-0"><h5 class="fw-bold">New Transaction</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="small fw-bold mb-2">Account</label>
+                    <select name="account" class="form-select form-control-custom" required>
+                        {% for acc in accounts %}<option value="{{ acc.id }}">{{ acc.name }} ({{ acc.currency.code }})</option>{% endfor %}
+                    </select>
+                </div>
+                <div class="row mb-3">
+                    <div class="col-6">
+                        <label class="small fw-bold mb-2">Type</label>
+                        <select name="type" class="form-select form-control-custom"><option value="EXPENSE">Expense</option><option value="INCOME">Income</option></select>
+                    </div>
+                    <div class="col-6">
+                        <label class="small fw-bold mb-2">Amount</label>
+                        <input type="number" step="0.01" name="amount" class="form-control form-control-custom" required>
                     </div>
                 </div>
-                <div class="modal-footer border-0 px-4 pb-4"><button type="submit" class="btn btn-success w-100 rounded-pill fw-bold">Save Goal</button></div>
-            </form>
-        </div>
+                <div class="mb-3"><label class="small fw-bold mb-2">Category</label><input type="text" name="category" class="form-control form-control-custom" required></div>
+            </div>
+            <div class="modal-footer border-0"><button type="submit" class="btn btn-primary w-100 py-3 rounded-4 shadow">Save</button></div>
+        </form>
     </div>
 </div>
 
-<div class="modal fade" id="addBudgetModal" tabindex="-1" aria-hidden="true">
+<div class="modal fade" id="contributeGoalModal" tabindex="-1">
     <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow" style="border-radius: 24px;">
-            <div class="modal-header border-0 px-4 pt-4"><h5 class="fw-bold">Set New Budget</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <form action="{% url 'add_budget' %}" method="POST">
-                {% csrf_token %}
-                <div class="modal-body px-4">
-                    <select name="name" class="form-select form-control-custom mb-3"><option value="MONTHLY">Monthly</option><option value="STIPEND">Stipend</option><option value="OTHER">Other</option></select>
-                    <input type="text" name="category" class="form-control form-control-custom mb-3" placeholder="Category (e.g. Food)" required>
-                    <div class="row">
-                        <div class="col-6"><input type="number" name="limit" class="form-control form-control-custom" placeholder="Limit Amount" step="0.01" required></div>
-                        <div class="col-6"><select name="currency" class="form-select form-control-custom">{% for curr in all_currencies %}<option value="{{ curr.id }}">{{ curr.code }}</option>{% endfor %}</select></div>
-                    </div>
-                </div>
-                <div class="modal-footer border-0 px-4 pb-4"><button type="submit" class="btn btn-warning w-100 rounded-pill fw-bold">Save Budget</button></div>
-            </form>
-        </div>
-    </div>
-</div>
-
-<div class="modal fade" id="contributeGoalModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow" style="border-radius: 24px;">
-            <div class="modal-header border-0 px-4 pt-4"><h5 class="fw-bold">Contribute to Goal</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <form action="{% url 'contribute_to_goal' %}" method="POST">
-                {% csrf_token %}
-                <div class="modal-body px-4">
-                    <select name="goal" class="form-select form-control-custom mb-3" required>
-                        {% for goal in goals %}
-                            <option value="{{ goal.id }}">{{ goal.title }}</option>
-                        {% empty %}
-                            <option value="" disabled selected>No goals available</option>
-                        {% endfor %}
+        <form method="POST" action="{% url 'contribute_to_goal' %}" class="modal-content">
+            {% csrf_token %}
+            <div class="modal-header border-0"><h5 class="fw-bold">Contribute to Goal</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
+            <div class="modal-body">
+                <div class="mb-3">
+                    <label class="small fw-bold mb-2">Select Goal</label>
+                    <select name="goal" class="form-select form-control-custom">
+                        {% for goal in goals %}<option value="{{ goal.id }}">{{ goal.title }}</option>{% endfor %}
                     </select>
-                    <select name="account" class="form-select form-control-custom mb-3" required>
-                        {% for acc in accounts %}
-                            <option value="{{ acc.id }}">{{ acc.name }} ({{ acc.balance }} {{ acc.currency.code }})</option>
-                        {% endfor %}
+                </div>
+                <div class="mb-3">
+                    <label class="small fw-bold mb-2">From Account</label>
+                    <select name="account" class="form-select form-control-custom">
+                        {% for acc in accounts %}<option value="{{ acc.id }}">{{ acc.name }}</option>{% endfor %}
                     </select>
-                    <input type="number" name="amount" class="form-control form-control-custom" placeholder="Amount to add" step="0.01" required>
                 </div>
-                <div class="modal-footer border-0 px-4 pb-4"><button type="submit" class="btn btn-success w-100 rounded-pill fw-bold">Transfer to Goal</button></div>
-            </form>
-        </div>
+                <div class="mb-3"><label class="small fw-bold mb-2">Amount</label><input type="number" step="0.01" name="amount" class="form-control form-control-custom" required></div>
+            </div>
+            <div class="modal-footer border-0"><button type="submit" class="btn btn-success w-100 py-3 rounded-4 shadow">Transfer Savings</button></div>
+        </form>
     </div>
 </div>
 
-<div class="modal fade" id="addAccountModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow" style="border-radius: 24px;">
-            <div class="modal-header border-0 px-4 pt-4"><h5 class="fw-bold">Create Account</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <form action="{% url 'add_account' %}" method="POST">
-                {% csrf_token %}
-                <div class="modal-body px-4">
-                    <input type="text" name="name" class="form-control form-control-custom mb-3" placeholder="Account Name" required>
-                    <div class="row"><div class="col-6"><input type="number" name="balance" class="form-control form-control-custom" placeholder="0.00" step="0.01"></div><div class="col-6"><select name="currency" class="form-select form-control-custom">{% for curr in all_currencies %}<option value="{{ curr.id }}">{{ curr.code }}</option>{% endfor %}</select></div></div>
-                </div>
-                <div class="modal-footer border-0 px-4 pb-4"><button type="submit" class="btn btn-primary w-100 rounded-pill">Create Now</button></div>
-            </form>
-        </div>
-    </div>
-</div>
 
-<div class="modal fade" id="addTransactionModal" tabindex="-1" aria-hidden="true">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content border-0 shadow" style="border-radius: 24px;">
-            <div class="modal-header border-0 px-4 pt-4"><h5 class="fw-bold">New Transaction</h5><button type="button" class="btn-close" data-bs-dismiss="modal"></button></div>
-            <form action="{% url 'add_transaction' %}" method="POST">
-                {% csrf_token %}
-                <div class="modal-body px-4">
-                    <select name="account" class="form-select form-control-custom mb-3" required>{% for acc in accounts %}<option value="{{ acc.id }}">{{ acc.name }}</option>{% endfor %}</select>
-                    <div class="row mb-3"><div class="col-6"><input type="number" name="amount" class="form-control form-control-custom" placeholder="Amount" step="0.01" required></div><div class="col-6"><select name="type" class="form-select form-control-custom"><option value="EXPENSE">Expense</option><option value="INCOME">Income</option></select></div></div>
-                    <input type="text" name="category" class="form-control form-control-custom" placeholder="Category (e.g. Food)" required>
-                </div>
-                <div class="modal-footer border-0 px-4 pb-4"><button type="submit" class="btn btn-primary w-100 rounded-pill">Save</button></div>
-            </form>
-        </div>
-    </div>
-</div>
 
-{% if chart_data %}
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
     const ctx = document.getElementById('expenseChart').getContext('2d');
     new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: {{ chart_labels|safe }},
+            labels: {{ chart_labels|safe|default:"[]" }},
             datasets: [{
-                data: {{ chart_data|safe }},
-                backgroundColor: ['#0d6efd', '#00d4ff', '#6610f2', '#ffc107', '#dc3545', '#20c997'],
+                data: {{ chart_data|safe|default:"[]" }},
+                backgroundColor: ['#3182ce', '#63b3ed', '#805ad5', '#ecc94b', '#f56565', '#38b2ac'],
                 borderWidth: 0
             }]
         },
-        options: { maintainAspectRatio: false, cutout: '70%', plugins: { legend: { position: 'right', labels: { usePointStyle: true } } } }
+        options: { cutout: '75%', maintainAspectRatio: false, plugins: { legend: { position: 'bottom' } } }
     });
 </script>
-{% endif %}
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

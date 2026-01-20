@@ -18,14 +18,18 @@ urlpatterns = [
     path('logout/', views.logout_view, name='logout'),
     path('forgot-password/', views.forgot_password, name='forgot_password'),
     path('verify-code/<int:user_id>/', views.verify_code, name='verify_code'),
+    path('change-password/', views.change_password, name='change_password'),
+
 
     path('history/', views.history_view, name='history'),
     path('budgets/', views.budget_list, name='budget_list'),
+    path('goals-history/', views.goals_history, name='goals_history'),
     path('add-transaction/', views.add_transaction, name='add_transaction'),
     path('add-account/', views.add_account, name='add_account'),
     path('add-budget/', views.add_budget, name='add_budget'),
     path('contribute-goal/', views.contribute_to_goal, name='contribute_to_goal'),
     path('add-goal/', views.add_goal, name='add_goal'),
+
 
 
     path('api/', include(router.urls)),

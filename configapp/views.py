@@ -1,11 +1,14 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
 from django.utils import timezone
-from django.contrib.auth import login, authenticate, logout, get_user_model
+from django.contrib.auth import login, authenticate, logout, get_user_model, update_session_auth_hash
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
 from decimal import Decimal
+from django.core.mail import send_mail
+from django.conf import settings
 import random
+from django.contrib.auth.forms import PasswordChangeForm
 
 from .models import Account, Transaction, FinancialGoal, Currency, ResetCode, RecurringTransaction, Budget
 from rest_framework import viewsets
@@ -109,6 +112,7 @@ def add_transaction(request):
         messages.success(request, "Tranzaksiya saqlandi!")
     return redirect('home')
 
+
 @login_required(login_url='login')
 def add_budget(request):
     if request.method == "POST":
@@ -116,7 +120,14 @@ def add_budget(request):
         category = request.POST.get('category')
         limit = Decimal(request.POST.get('limit', '0'))
         currency = get_object_or_404(Currency, id=request.POST.get('currency'))
-        Budget.objects.create(user=request.user, name=name, category=category, amount_limit=limit, currency=currency)
+
+        Budget.objects.create(
+            user=request.user,
+            name=name,
+            category=category,
+            amount_limit=limit,
+            currency=currency,
+        )
         messages.success(request, "Byudjet belgilandi!")
     return redirect('home')
 
@@ -207,10 +218,30 @@ def logout_view(request):
     logout(request)
     return redirect('login')
 
+
 @login_required(login_url='login')
 def history_view(request):
-    return render(request, 'history.html', \
-                  {'transactions': Transaction.objects.filter(account__user=request.user).order_by('-date')})
+    transactions = Transaction.objects.filter(account__user=request.user).order_by('-date')
+
+    t_type = request.GET.get('type')
+    if t_type:
+        transactions = transactions.filter(type=t_type)
+
+    search_query = request.GET.get('search')
+    if search_query:
+        transactions = transactions.filter(category__icontains=search_query)
+
+    return render(request, 'history.html', {'transactions': transactions})
+
+
+@login_required(login_url='login')
+def goals_history(request):
+    goal_transactions = Transaction.objects.filter(
+        account__user=request.user,
+        category__startswith="Goal:"
+    ).order_by('-date')
+
+    return render(request, 'goals_history.html', {'transactions': goal_transactions})
 
 @login_required(login_url='login')
 @user_passes_test(is_admin)
@@ -247,13 +278,30 @@ def add_account(request):
                                currency=get_object_or_404(Currency, id=request.POST.get('currency')))
     return redirect('home')
 
+
 def forgot_password(request):
     if request.method == "POST":
-        user = User.objects.filter(email=request.POST.get('email')).first()
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
+
         if user:
             code = str(random.randint(100000, 999999))
             ResetCode.objects.create(user=user, code=code)
-            return redirect('verify_code', user_id=user.id)
+
+            subject = 'FinanceHome - Parolni tiklash kodi'
+            message = f'Sizning tasdiqlash kodingiz: {code}. Ushbu kod 10 daqiqa davomida amal qiladi.'
+            email_from = settings.EMAIL_HOST_USER
+            recipient_list = [email]
+
+            try:
+                send_mail(subject, message, email_from, recipient_list)
+                messages.success(request, "Kod emailingizga yuborildi!")
+                return redirect('verify_code', user_id=user.id)
+            except Exception as e:
+                messages.error(request, f"Email yuborishda xatolik: {str(e)}")
+        else:
+            messages.error(request, "Bunday email bilan foydalanuvchi topilmadi.")
+
     return render(request, 'forgot_password.html')
 
 def verify_code(request, user_id):
@@ -264,6 +312,22 @@ def verify_code(request, user_id):
             reset.user.save()
             return redirect('login')
     return render(request, 'verify_code.html')
+
+
+@login_required(login_url='login')
+def change_password(request):
+    if request.method == 'POST':
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            messages.success(request, "Parolingiz muvaffaqiyatli o'zgartirildi!")
+            return redirect('home')
+        else:
+            messages.error(request, "Iltimos, xatolarni tuzating.")
+    else:
+        form = PasswordChangeForm(request.user)
+    return render(request, 'change_password.html', {'form': form})
 
 class AccountViewSet(viewsets.ModelViewSet):
     serializer_class = AccountSerializer
