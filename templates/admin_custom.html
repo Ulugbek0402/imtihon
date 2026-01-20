@@ -29,44 +29,105 @@
 <div class="sidebar">
     <div class="mb-5 px-3"><h3 class="fw-bold"><span style="color: var(--accent-color);">FINANCE</span>HOME</h3></div>
     <nav class="nav flex-column">
-        <a class="nav-link active" href="{% url 'admin_panel' %}"><i class="bi bi-grid-fill me-2"></i> Dashboard</a>
-        <a class="nav-link" href="{% url 'home' %}"><i class="bi bi-person-badge me-2"></i> User View</a>
-        <div class="mt-auto pt-5"><a class="nav-link text-danger fw-bold" href="{% url 'logout' %}"><i class="bi bi-power me-2"></i> Logout</a></div>
+        <a class="nav-link active" href="{% url 'admin_panel' %}">
+            <i class="bi bi-grid-fill me-2"></i> Dashboard
+        </a>
+        <div class="mt-auto pt-5">
+            <a class="nav-link text-danger fw-bold" href="{% url 'logout' %}">
+                <i class="bi bi-power me-2"></i> Logout
+            </a>
+        </div>
     </nav>
 </div>
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-5">
-        <div><h2 class="fw-bold mb-0">Admin Control Center</h2><p class="text-muted">Manage system data & users</p></div>
-        <div class="bg-white px-4 py-2 rounded-pill shadow-sm"><span class="text-success fw-bold small">● System Active</span></div>
+        <div>
+            <h2 class="fw-bold mb-0">Admin Control Center</h2>
+            <p class="text-muted small">Manage system data & users</p>
+        </div>
+        <div class="bg-white px-4 py-2 rounded-pill shadow-sm">
+            <span class="text-success fw-bold small">● System Active</span>
+        </div>
     </div>
 
     <div class="row g-4 mb-5">
-        <div class="col-md-4"><div class="stat-card"><div class="icon-box"><i class="bi bi-people"></i></div><div><p class="text-muted small mb-0">Total Users</p><h3 class="fw-bold mb-0">{{ total_users }}</h3></div></div></div>
-        <div class="col-md-4"><div class="stat-card"><div class="icon-box"><i class="bi bi-wallet2"></i></div><div><p class="text-muted small mb-0">Active Accounts</p><h3 class="fw-bold mb-0">{{ total_accounts }}</h3></div></div></div>
-        <div class="col-md-4"><div class="stat-card"><div class="icon-box"><i class="bi bi-activity"></i></div><div><p class="text-muted small mb-0">Transactions</p><h3 class="fw-bold mb-0">{{ total_transactions }}</h3></div></div></div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="icon-box"><i class="bi bi-people"></i></div>
+                <div><p class="text-muted small mb-0">Total Users</p><h3 class="fw-bold mb-0">{{ total_users }}</h3></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="icon-box"><i class="bi bi-wallet2"></i></div>
+                <div><p class="text-muted small mb-0">Active Accounts</p><h3 class="fw-bold mb-0">{{ total_accounts }}</h3></div>
+            </div>
+        </div>
+        <div class="col-md-4">
+            <div class="stat-card">
+                <div class="icon-box"><i class="bi bi-activity"></i></div>
+                <div><p class="text-muted small mb-0">Transactions</p><h3 class="fw-bold mb-0">{{ total_transactions }}</h3></div>
+            </div>
+        </div>
     </div>
 
     <h4 class="fw-bold mb-4">Database Management</h4>
     <div class="row g-4 mb-5">
-        <div class="col-md-3"><a href="{% url 'admin_manage' 'accounts' %}" class="module-btn"><i class="bi bi-bank"></i><h5>Accounts</h5><p class="text-muted small mb-0">Wallets info</p></a></div>
-        <div class="col-md-3"><a href="{% url 'admin_manage' 'currencies' %}" class="module-btn"><i class="bi bi-coin"></i><h5>Currencies</h5><p class="text-muted small mb-0">Exchange rates</p></a></div>
-        <div class="col-md-3"><a href="{% url 'admin_manage' 'transactions' %}" class="module-btn"><i class="bi bi-receipt"></i><h5>Transactions</h5><p class="text-muted small mb-0">Full history</p></a></div>
-        <div class="col-md-3"><a href="{% url 'admin_manage' 'goals' %}" class="module-btn"><i class="bi bi-flag"></i><h5>Goals</h5><p class="text-muted small mb-0">User targets</p></a></div>
+        <div class="col-md-3">
+            <a href="{% url 'admin_manage' 'accounts' %}" class="module-btn">
+                <i class="bi bi-bank"></i>
+                <h5>Accounts</h5>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'admin_manage' 'currencies' %}" class="module-btn">
+                <i class="bi bi-coin"></i>
+                <h5>Currencies</h5>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'admin_manage' 'transactions' %}" class="module-btn">
+                <i class="bi bi-receipt"></i>
+                <h5>Transactions</h5>
+            </a>
+        </div>
+        <div class="col-md-3">
+            <a href="{% url 'admin_manage' 'goals' %}" class="module-btn">
+                <i class="bi bi-flag"></i>
+                <h5>Goals</h5>
+            </a>
+        </div>
     </div>
 
     <div class="custom-table-card">
         <h4 class="fw-bold mb-4">User List</h4>
         <div class="table-responsive">
             <table class="table align-middle">
-                <thead><tr class="small text-muted"><th>EMAIL</th><th>ACCOUNTS</th><th>JOINED</th><th class="text-end">ACTION</th></tr></thead>
+                <thead>
+                    <tr class="small text-muted">
+                        <th>EMAIL</th>
+                        <th>ACCOUNTS</th>
+                        <th>JOINED</th>
+                        <th class="text-end">ACTION</th>
+                    </tr>
+                </thead>
                 <tbody>
                     {% for u in users_list %}
                     <tr>
-                        <td><div class="d-flex align-items-center"><div class="user-avatar me-2">{{ u.email|first|upper }}</div><span class="fw-bold">{{ u.email }}</span></div></td>
+                        <td>
+                            <div class="d-flex align-items-center">
+                                <div class="user-avatar me-2">{{ u.email|first|upper }}</div>
+                                <span class="fw-bold">{{ u.email }}</span>
+                            </div>
+                        </td>
                         <td><span class="badge bg-primary-subtle text-primary px-3 rounded-pill">{{ u.account_set.count }}</span></td>
                         <td class="text-muted small">{{ u.date_joined|date:"d.m.Y" }}</td>
-                        <td class="text-end"><button onclick="confirmDelete('{{ u.id }}', '{{ u.email }}')" class="btn btn-sm text-danger border-0"><i class="bi bi-trash3"></i></button></td>
+                        <td class="text-end">
+                            <button onclick="confirmDelete('{{ u.id }}', '{{ u.email }}')" class="btn btn-sm text-danger border-0">
+                                <i class="bi bi-trash3"></i>
+                            </button>
+                        </td>
                     </tr>
                     {% endfor %}
                 </tbody>
@@ -77,7 +138,9 @@
 
 <script>
     function confirmDelete(id, email) {
-        if (confirm("Delete user " + email + "?")) { window.location.href = "/delete-user/" + id + "/"; }
+        if (confirm("Delete user " + email + "?")) {
+            window.location.href = "/delete-user/" + id + "/";
+        }
     }
 </script>
 </body>

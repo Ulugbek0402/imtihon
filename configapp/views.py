@@ -4,6 +4,7 @@ from django.utils import timezone
 from django.contrib.auth import login, authenticate, logout, get_user_model
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.contrib import messages
+from decimal import Decimal
 import random
 
 from .models import Account, Transaction, FinancialGoal, Currency, ResetCode, RecurringTransaction
@@ -32,21 +33,26 @@ def home_view(request):
         item.save()
 
     selected_code = request.GET.get('currency', 'UZS')
-    target_currency = Currency.objects.filter(code=selected_code).first() or Currency.objects.first()
+    target_currency = Currency.objects.filter(code=selected_code).first() or Currency.objects.filter(
+        code='UZS').first() or Currency.objects.first()
 
     accounts = Account.objects.filter(user=request.user)
     goals = FinancialGoal.objects.filter(user=request.user)
 
-    total_balance = 0
-    if target_currency:
-        for acc in accounts:
-            balance_in_base = acc.balance * acc.currency.rate
-            total_balance += (balance_in_base / target_currency.rate)
+    total_balance = Decimal('0.00')
+    category_totals = {}
 
-    expenses = Transaction.objects.filter(account__user=request.user, type='EXPENSE').values('category').annotate(
-        total=Sum('amount'))
-    chart_labels = [item['category'] for item in expenses]
-    chart_data = [float(item['total']) for item in expenses]
+    for acc in accounts:
+        acc_rate = acc.currency.rate
+        total_balance += (acc.balance * acc_rate / target_currency.rate)
+
+        acc_transactions = Transaction.objects.filter(account=acc, type='EXPENSE')
+        for t in acc_transactions:
+            converted_amount = t.amount * acc_rate / target_currency.rate
+            category_totals[t.category] = category_totals.get(t.category, Decimal('0')) + converted_amount
+
+    chart_labels = list(category_totals.keys())
+    chart_data = [float(amount) for amount in category_totals.values()]
 
     return render(request, 'home.html', {
         'accounts': accounts, 'goals': goals, 'total': total_balance,
@@ -73,7 +79,6 @@ def admin_dashboard(request):
 def admin_manage_model(request, model_name):
     data = []
     columns = []
-
     if model_name == 'accounts':
         data = Account.objects.all()
         columns = ['User', 'Name', 'Balance', 'Currency']
@@ -86,7 +91,6 @@ def admin_manage_model(request, model_name):
     elif model_name == 'goals':
         data = FinancialGoal.objects.all()
         columns = ['User', 'Title', 'Target', 'Current']
-
     return render(request, 'admin_model_list.html', {
         'data': data,
         'model_name': model_name.capitalize(),
@@ -100,7 +104,7 @@ def delete_user(request, user_id):
     user = get_object_or_404(User, id=user_id)
     if not user.is_superuser:
         user.delete()
-        messages.success(request, "User deleted successfully.")
+        messages.success(request, "User deleted.")
     return redirect('admin_panel')
 
 
@@ -108,7 +112,7 @@ def delete_user(request, user_id):
 def add_account(request):
     if request.method == "POST":
         name = request.POST.get('name')
-        balance = request.POST.get('balance', 0)
+        balance = Decimal(request.POST.get('balance', '0'))
         currency_id = request.POST.get('currency')
         try:
             currency = Currency.objects.get(id=currency_id)
@@ -123,14 +127,20 @@ def add_account(request):
 def add_transaction(request):
     if request.method == "POST":
         account_id = request.POST.get('account')
-        amount = float(request.POST.get('amount'))
+        amount = Decimal(request.POST.get('amount', '0'))
         t_type = request.POST.get('type')
         category = request.POST.get('category')
         account = get_object_or_404(Account, id=account_id, user=request.user)
+
+        if t_type == 'EXPENSE' and account.balance < amount:
+            messages.error(request, "Hisobingizda mablag' yetarli emas!")
+            return redirect('home')
+
         if t_type == 'INCOME':
             account.balance += amount
         else:
             account.balance -= amount
+
         account.save()
         Transaction.objects.create(account=account, amount=amount, type=t_type, category=category)
         messages.success(request, "Transaction saved!")
@@ -144,7 +154,7 @@ def login_view(request):
         email = request.POST.get('email')
         password = request.POST.get('password')
         user = authenticate(request, username=email, password=password)
-        if user:
+        if user is not None:
             login(request, user)
             return redirect('admin_panel') if user.is_superuser else redirect('home')
         messages.error(request, "Invalid login!")
@@ -158,9 +168,12 @@ def register_view(request):
         confirm = request.POST.get('confirm_password')
         if password == confirm:
             if not User.objects.filter(email=email).exists():
-                user = User.objects.create_user(email=email, password=password, username=email.split('@')[0])
+                user = User.objects.create_user(email=email, password=password, username=email)
                 login(request, user)
                 return redirect('home')
+            messages.error(request, "Email already exists!")
+        else:
+            messages.error(request, "Passwords mismatch!")
     return render(request, 'register.html')
 
 
@@ -180,13 +193,17 @@ def contribute_to_goal(request):
     if request.method == "POST":
         goal = get_object_or_404(FinancialGoal, id=request.POST.get('goal'), user=request.user)
         account = get_object_or_404(Account, id=request.POST.get('account'), user=request.user)
-        amount = float(request.POST.get('amount'))
+        amount = Decimal(request.POST.get('amount', '0'))
+
         if account.balance >= amount:
             account.balance -= amount
             account.save()
             goal.current_amount += amount
             goal.save()
             Transaction.objects.create(account=account, amount=amount, type='EXPENSE', category=f"Goal: {goal.title}")
+            messages.success(request, "Goal updated!")
+        else:
+            messages.error(request, "Hisobda mablag' yetarli emas!")
     return redirect('home')
 
 
