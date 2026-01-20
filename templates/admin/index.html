@@ -1,0 +1,12 @@
+{% extends "admin/index.html" %}
+
+{% block content %}
+<div id="content-main">
+    <div style="background: #fff; padding: 20px; border-radius: 15px; margin-bottom: 30px; border-left: 5px solid #3498db;">
+        <h2 style="margin: 0; color: #2c3e50;">Xush kelibsiz, {{ user.username }}!</h2>
+        <p style="color: #7f8c8d; margin-top: 5px;">Bugun tizimdagi barcha moliyaviy amallarni boshqarishingiz mumkin.</p>
+    </div>
+    
+    {{ block.super }}
+</div>
+{% endblock %}

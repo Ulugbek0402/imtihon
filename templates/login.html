@@ -2,44 +2,97 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Login | FinanceHome</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
-        body { background: #f0f2f5; height: 100vh; display: flex; align-items: center; justify-content: center; }
-        .auth-card { width: 400px; padding: 40px; border-radius: 20px; border: none; box-shadow: 0 10px 30px rgba(0,0,0,0.05); }
-        .btn-primary { border-radius: 10px; padding: 12px; font-weight: 600; }
-        .form-control { border-radius: 10px; padding: 12px; }
+        body {
+            background: linear-gradient(135deg, #0d6efd 0%, #00d4ff 100%);
+            height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        .auth-card {
+            width: 100%;
+            max-width: 400px;
+            padding: 40px;
+            border-radius: 30px;
+            border: none;
+            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
+            background: white;
+        }
+        .form-control-custom {
+            background: #f8f9fa;
+            border: 2px solid transparent;
+            padding: 12px 20px;
+            border-radius: 15px;
+            transition: 0.3s;
+        }
+        .form-control-custom:focus {
+            background: white;
+            border-color: #0d6efd;
+            box-shadow: none;
+        }
+        .btn-login {
+            background: #0d6efd;
+            border: none;
+            border-radius: 15px;
+            padding: 12px;
+            font-weight: 700;
+            color: white;
+            transition: 0.3s;
+        }
+        .btn-login:hover {
+            background: #0b5ed7;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+        }
+        .brand-logo {
+            font-size: 2rem;
+            font-weight: 800;
+            color: #0d6efd;
+            text-align: center;
+            margin-bottom: 5px;
+        }
     </style>
 </head>
 <body>
-    <div class="card auth-card bg-white">
-        <h3 class="fw-bold text-center mb-2">Welcome Back</h3>
-        <p class="text-muted text-center mb-4">Login to manage your finances</p>
 
-        {% if messages %}
-            {% for message in messages %}
-                <div class="alert alert-danger small">{{ message }}</div>
-            {% endfor %}
-        {% endif %}
+<div class="auth-card">
+    <div class="brand-logo">💰 FinanceHome</div>
+    <p class="text-muted text-center mb-4">Manage your money, master your life.</p>
 
-        <form method="POST">
-            {% csrf_token %}
-            <div class="mb-3">
-                <label class="form-label small fw-bold">Email Address</label>
-                <input type="email" name="email" class="form-control" placeholder="name@example.com" required>
-            </div>
-            <div class="mb-3">
-                <label class="form-label small fw-bold">Password</label>
-                <input type="password" name="password" class="form-control" placeholder="••••••••" required>
-            </div>
-            <button type="submit" class="btn btn-primary w-100 mb-3">Login</button>
-        </form>
+    {% if messages %}
+        {% for message in messages %}
+            <div class="alert alert-danger border-0 small py-2 rounded-pill text-center">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
 
-        <div class="text-center">
-            <a href="{% url 'forgot_password' %}" class="text-decoration-none small">Forgot password?</a>
-            <hr>
-            <p class="small">Don't have an account? <a href="{% url 'register' %}" class="text-decoration-none">Register</a></p>
+    <form method="POST">
+        {% csrf_token %}
+        <div class="mb-3">
+            <label class="form-label small fw-bold text-muted ms-2">Email Address</label>
+            <input type="email" name="email" class="form-control form-control-custom" placeholder="name@example.com" required>
+        </div>
+        <div class="mb-4">
+            <label class="form-label small fw-bold text-muted ms-2">Password</label>
+            <input type="password" name="password" class="form-control form-control-custom" placeholder="••••••••" required>
+        </div>
+
+        <button type="submit" class="btn btn-login w-100 mb-3 shadow-sm">Sign In</button>
+    </form>
+
+    <div class="text-center mt-3">
+        <a href="{% url 'forgot_password' %}" class="text-decoration-none small text-muted">Forgot your password?</a>
+        <div class="mt-3 pt-3 border-top">
+            <p class="small text-muted mb-0">
+                New here? <a href="{% url 'register' %}" class="text-decoration-none fw-bold text-primary">Create an account</a>
+            </p>
         </div>
     </div>
+</div>
+
 </body>
 </html>
