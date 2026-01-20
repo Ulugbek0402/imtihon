@@ -1,47 +1,21 @@
 {% extends "admin/base.html" %}
+{% load i18n %}
 
-{% block title %}{{ title }} | FinanceHome Admin{% endblock %}
+{% block title %}{{ title }} | {% trans "FinanceHome Admin" %}{% endblock %}
 
 {% block extrastyle %}
+{{ block.super }}
 <style>
-    /* Admin Panelning umumiy stili */
-    #header {
-        background: #2c3e50 !important;
-        color: #fff !important;
-        padding: 15px 40px !important;
-        height: auto !important;
-    }
-    #branding h1 {
-        font-size: 24px !important;
-        font-weight: 800 !important;
-        color: #ecf0f1 !important;
-    }
-    .module h2, .module caption, .section h2 {
-        background: #3498db !important;
-        border-radius: 8px 8px 0 0 !important;
-    }
-    div.breadcrumbs {
-        background: #f8f9fa !important;
-        border-bottom: 1px solid #dee2e6 !important;
-        color: #6c757d !important;
-    }
-    .button, input[type=submit], input[type=button], .submit-row input, a.button {
-        background: #3498db !important;
-        border-radius: 6px !important;
-        padding: 10px 20px !important;
-        transition: 0.3s !important;
-    }
-    .button:hover {
-        background: #2980b9 !important;
-    }
-    #content-main {
-        padding: 30px !important;
-    }
-    .module {
-        border-radius: 12px !important;
-        overflow: hidden !important;
-        box-shadow: 0 4px 6px rgba(0,0,0,0.1) !important;
-        border: none !important;
+    /* Admin Panel stillari */
+    #header { background: #2c3e50 !important; color: #fff !important; padding: 15px 40px !important; }
+    #branding h1 { font-size: 24px !important; font-weight: 800 !important; color: #ecf0f1 !important; }
+    .module h2 { background: #3498db !important; border-radius: 8px 8px 0 0 !important; }
+
+    /* Til tanlash tugmasi stili */
+    .lang-form { float: right; margin-left: 20px; margin-top: 5px; }
+    .lang-select {
+        background: #34495e; color: white; border: 1px solid #5d6d7e;
+        border-radius: 4px; padding: 2px 8px; cursor: pointer; font-size: 13px;
     }
 </style>
 {% endblock %}
@@ -49,9 +23,26 @@
 {% block branding %}
 <h1 id="site-name">
     <a href="{% url 'admin:index' %}" style="color: #fff; text-decoration: none;">
-        💰 FinanceHome <span style="font-weight: 300; font-size: 16px;">Super Control</span>
+        💰 FinanceHome <span style="font-weight: 300; font-size: 16px;">{% trans "Super Control" %}</span>
     </a>
 </h1>
 {% endblock %}
 
-{% block nav-global %}{% endblock %}
+{% block nav-global %}
+    {# AdminHeader ga til tanlash tugmasini qo'shish #}
+    <div class="lang-form">
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <select name="language" class="lang-select" onchange="this.form.submit()">
+                {% get_current_language as LANGUAGE_CODE %}
+                {% get_available_languages as LANGUAGES %}
+                {% for lang in LANGUAGES %}
+                    <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>
+                        {{ lang.1 }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+    {{ block.super }}
+{% endblock %}

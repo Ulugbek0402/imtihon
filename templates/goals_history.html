@@ -1,9 +1,11 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Goals History | FinanceHome</title>
+    <title>{% trans "Goals History | FinanceHome" %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
@@ -16,6 +18,10 @@
         .main-content { margin-left: 280px; padding: 40px; }
         .card-custom { border: none; border-radius: 30px; box-shadow: 0 10px 25px rgba(0,0,0,0.03); background: #fff; padding: 30px; }
         .icon-box { width: 40px; height: 40px; border-radius: 12px; display: flex; align-items: center; justify-content: center; margin-right: 15px; background-color: #e6fffa; color: #2c7a7b; }
+
+        /* Language Switcher */
+        .lang-section { margin-top: auto; padding: 20px 10px; border-top: 1px solid #f1f5f9; }
+        .lang-select-custom { font-size: 0.85rem; font-weight: 600; border-radius: 12px; border: 1px solid #e2e8f0; padding: 10px; background: #f8fafc; cursor: pointer; width: 100%; }
     </style>
 </head>
 <body>
@@ -26,52 +32,70 @@
         <h4 class="fw-bold text-dark mb-0">FinanceHome</h4>
     </div>
     <ul class="nav flex-column mb-auto">
-        <li><a class="nav-link" href="{% url 'home' %}"><i class="bi bi-grid-1x2-fill"></i> Dashboard</a></li>
-        <li><a class="nav-link" href="{% url 'history' %}"><i class="bi bi-arrow-left-right"></i> Transactions</a></li>
-        <li><a class="nav-link active" href="{% url 'goals_history' %}"><i class="bi bi-flag-fill"></i> Goals History</a></li>
-        <li><a class="nav-link" href="{% url 'budget_list' %}"><i class="bi bi-pie-chart"></i> Budgets</a></li>
+        <li><a class="nav-link" href="{% url 'home' %}"><i class="bi bi-grid-1x2-fill me-2"></i> {% trans "Dashboard" %}</a></li>
+        <li><a class="nav-link" href="{% url 'history' %}"><i class="bi bi-arrow-left-right me-2"></i> {% trans "Transactions" %}</a></li>
+        <li><a class="nav-link active" href="{% url 'goals_history' %}"><i class="bi bi-flag-fill me-2"></i> {% trans "Goals History" %}</a></li>
+        <li><a class="nav-link" href="{% url 'budget_list' %}"><i class="bi bi-pie-chart me-2"></i> {% trans "Budgets" %}</a></li>
     </ul>
-    <div class="mt-auto">
-        <a class="nav-link text-danger fw-bold" href="{% url 'logout' %}"><i class="bi bi-box-arrow-right"></i> Logout</a>
+
+    <div class="lang-section">
+        <label class="small text-muted fw-bold mb-2 d-block text-uppercase">{% trans "Language" %}</label>
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <select name="language" class="form-select lang-select-custom" onchange="this.form.submit()">
+                {% get_available_languages as LANGUAGES %}
+                {% for lang in LANGUAGES %}
+                    <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>
+                        {{ lang.1 }}
+                    </option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <div class="pt-3">
+        <a class="nav-link text-danger fw-bold" href="{% url 'logout' %}">
+            <i class="bi bi-box-arrow-right me-2"></i> {% trans "Logout" %}
+        </a>
     </div>
 </div>
 
 <div class="main-content">
     <div class="mb-5">
-        <h2 class="fw-bold">Savings History</h2>
-        <p class="text-muted mb-0">Track all your contributions towards your financial goals</p>
+        <h2 class="fw-bold">{% trans "Savings History" %}</h2>
+        <p class="text-muted mb-0">{% trans "Track all your contributions towards your financial goals" %}</p>
     </div>
 
     <div class="card card-custom">
         <div class="table-responsive">
-            <table class="table table-hover mb-0">
+            <table class="table table-hover mb-0 align-middle">
                 <thead>
-                    <tr class="small text-muted">
-                        <th>DATE</th>
-                        <th>FROM ACCOUNT</th>
-                        <th>GOAL NAME</th>
-                        <th class="text-end">AMOUNT CONTRIBUTED</th>
+                    <tr class="small text-muted text-uppercase">
+                        <th class="py-3">{% trans "Date" %}</th>
+                        <th class="py-3">{% trans "From Account" %}</th>
+                        <th class="py-3">{% trans "Goal Name" %}</th>
+                        <th class="py-3 text-end">{% trans "Amount Contributed" %}</th>
                     </tr>
                 </thead>
                 <tbody>
                     {% for t in transactions %}
                     <tr>
-                        <td>
+                        <td class="py-3">
                             <div class="fw-bold text-dark">{{ t.date|date:"d M, Y" }}</div>
                             <div class="text-muted small">{{ t.date|date:"H:i" }}</div>
                         </td>
-                        <td>
+                        <td class="py-3">
                             <div class="d-flex align-items-center">
                                 <div class="icon-box"><i class="bi bi-bank"></i></div>
                                 <span class="fw-semibold">{{ t.account.name }}</span>
                             </div>
                         </td>
-                        <td>
+                        <td class="py-3">
                             <span class="badge bg-success-subtle text-success px-3 py-2 rounded-pill fw-bold">
                                 {{ t.category|cut:"Goal: " }}
                             </span>
                         </td>
-                        <td class="text-end fw-bold text-success fs-5">
+                        <td class="py-3 text-end fw-bold text-success fs-5">
                             +{{ t.amount|floatformat:2 }} <span class="small opacity-75">{{ t.account.currency.code }}</span>
                         </td>
                     </tr>
@@ -79,7 +103,7 @@
                     <tr>
                         <td colspan="4" class="text-center py-5">
                             <i class="bi bi-flag fs-1 text-muted opacity-25"></i>
-                            <p class="mt-3 text-muted">No goal contributions found yet.</p>
+                            <p class="mt-3 text-muted">{% trans "No goal contributions found yet." %}</p>
                         </td>
                     </tr>
                     {% endfor %}

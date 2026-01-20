@@ -1,98 +1,156 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Login | FinanceHome</title>
+    <title>{% trans "FinanceHome | Sign In" %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.0/font/bootstrap-icons.css">
     <style>
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap');
+
         body {
-            background: linear-gradient(135deg, #0d6efd 0%, #00d4ff 100%);
+            background-color: #f4f7fe;
+            font-family: 'Inter', sans-serif;
+            color: #2d3748;
             height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
         }
+
         .auth-card {
             width: 100%;
-            max-width: 400px;
+            max-width: 420px;
+            border: none;
+            border-radius: 35px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.04);
+            background: #fff;
             padding: 40px;
-            border-radius: 30px;
-            border: none;
-            box-shadow: 0 15px 35px rgba(0,0,0,0.2);
-            background: white;
         }
-        .form-control-custom {
-            background: #f8f9fa;
-            border: 2px solid transparent;
-            padding: 12px 20px;
-            border-radius: 15px;
-            transition: 0.3s;
-        }
-        .form-control-custom:focus {
-            background: white;
-            border-color: #0d6efd;
-            box-shadow: none;
-        }
-        .btn-login {
-            background: #0d6efd;
-            border: none;
-            border-radius: 15px;
-            padding: 12px;
-            font-weight: 700;
+
+        .logo-box {
+            background: #3182ce;
             color: white;
-            transition: 0.3s;
+            width: 45px;
+            height: 45px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
         }
-        .btn-login:hover {
-            background: #0b5ed7;
+
+        .form-control-custom {
+            background: #f7fafc;
+            border: 2px solid #edf2f7;
+            border-radius: 16px;
+            padding: 14px 18px;
+            transition: all 0.2s;
+            font-size: 0.95rem;
+        }
+
+        .form-control-custom:focus {
+            background: #fff;
+            border-color: #3182ce;
+            box-shadow: 0 0 0 4px rgba(49, 130, 206, 0.1);
+            outline: none;
+        }
+
+        .btn-primary-custom {
+            background: linear-gradient(135deg, #3182ce 0%, #2c5282 100%);
+            border: none;
+            border-radius: 16px;
+            padding: 14px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            color: white;
+            margin-top: 10px;
+        }
+
+        .btn-primary-custom:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(13, 110, 253, 0.3);
+            box-shadow: 0 10px 20px rgba(49, 130, 206, 0.2);
+            color: white;
         }
-        .brand-logo {
-            font-size: 2rem;
-            font-weight: 800;
-            color: #0d6efd;
-            text-align: center;
-            margin-bottom: 5px;
+
+        .lang-select-small {
+            font-size: 0.8rem;
+            border-radius: 12px;
+            border: 1px solid #e2e8f0;
+            background: #f8fafc;
+            padding: 8px 12px;
+            cursor: pointer;
+        }
+
+        .alert-custom {
+            border: none;
+            border-radius: 15px;
+            font-size: 0.85rem;
+            padding: 15px;
         }
     </style>
 </head>
 <body>
 
 <div class="auth-card">
-    <div class="brand-logo">💰 FinanceHome</div>
-    <p class="text-muted text-center mb-4">Manage your money, master your life.</p>
+    <div class="d-flex justify-content-between align-items-start mb-4">
+        <div class="logo-box shadow-sm">
+            <i class="bi bi-wallet2 fs-4"></i>
+        </div>
+
+        <form action="{% url 'set_language' %}" method="post">
+            {% csrf_token %}
+            <select name="language" class="form-select lang-select-small" onchange="this.form.submit()">
+                {% get_available_languages as LANGUAGES %}
+                {% for lang in LANGUAGES %}
+                    <option value="{{ lang.0 }}" {% if lang.0 == LANGUAGE_CODE %}selected{% endif %}>{{ lang.1 }}</option>
+                {% endfor %}
+            </select>
+        </form>
+    </div>
+
+    <h3 class="fw-bold text-dark mb-1">{% trans "Welcome Back" %}</h3>
+    <p class="text-muted mb-4">{% trans "Manage your wealth smarter." %}</p>
 
     {% if messages %}
         {% for message in messages %}
-            <div class="alert alert-danger border-0 small py-2 rounded-pill text-center">{{ message }}</div>
+            <div class="alert alert-danger alert-custom mb-4 d-flex align-items-center">
+                <i class="bi bi-exclamation-circle-fill me-2"></i> {{ message }}
+            </div>
         {% endfor %}
     {% endif %}
 
     <form method="POST">
         {% csrf_token %}
         <div class="mb-3">
-            <label class="form-label small fw-bold text-muted ms-2">Email Address</label>
+            <label class="small text-muted fw-bold mb-2 ms-1">{% trans "Email Address" %}</label>
             <input type="email" name="email" class="form-control form-control-custom" placeholder="name@example.com" required>
         </div>
         <div class="mb-4">
-            <label class="form-label small fw-bold text-muted ms-2">Password</label>
+            <div class="d-flex justify-content-between align-items-center mb-2 ms-1">
+                <label class="small text-muted fw-bold mb-0">{% trans "Password" %}</label>
+                <a href="{% url 'forgot_password' %}" class="small text-decoration-none text-primary fw-medium">{% trans "Forgot?" %}</a>
+            </div>
             <input type="password" name="password" class="form-control form-control-custom" placeholder="••••••••" required>
         </div>
 
-        <button type="submit" class="btn btn-login w-100 mb-3 shadow-sm">Sign In</button>
+        <button type="submit" class="btn btn-primary-custom w-100 shadow-sm">
+            {% trans "Sign In" %}
+        </button>
     </form>
 
-    <div class="text-center mt-3">
-        <a href="{% url 'forgot_password' %}" class="text-decoration-none small text-muted">Forgot your password?</a>
-        <div class="mt-3 pt-3 border-top">
-            <p class="small text-muted mb-0">
-                New here? <a href="{% url 'register' %}" class="text-decoration-none fw-bold text-primary">Create an account</a>
-            </p>
-        </div>
+    <div class="text-center mt-4 pt-2">
+        <p class="small text-muted mb-0">
+            {% trans "Don't have an account?" %}
+            <a href="{% url 'register' %}" class="fw-bold text-decoration-none text-primary ms-1">{% trans "Sign Up" %}</a>
+        </p>
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>

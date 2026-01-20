@@ -1,9 +1,11 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Create Account | FinanceHome</title>
+    <title>{% trans "Create Account | FinanceHome" %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body {
@@ -54,11 +56,6 @@
             font-weight: 800;
             color: #6610f2;
         }
-        .input-group-text {
-            background: #f8f9fa;
-            border: none;
-            border-radius: 15px 0 0 15px;
-        }
     </style>
 </head>
 <body>
@@ -66,8 +63,8 @@
 <div class="register-card">
     <div class="text-center mb-4">
         <div class="brand-logo mb-1">💰 FinanceHome</div>
-        <h4 class="fw-bold">Join Us Today!</h4>
-        <p class="text-muted small">Start managing your wealth smarter.</p>
+        <h4 class="fw-bold">{% trans "Join Us Today!" %}</h4>
+        <p class="text-muted small">{% trans "Start managing your wealth smarter." %}</p>
     </div>
 
     {% if messages %}
@@ -79,27 +76,29 @@
     <form method="POST" id="registerForm">
         {% csrf_token %}
         <div class="mb-3">
-            <label class="form-label small fw-bold text-muted ms-2">Email Address</label>
+            <label class="form-label small fw-bold text-muted ms-2">{% trans "Email Address" %}</label>
             <input type="email" name="email" class="form-control form-control-custom" placeholder="name@example.com" required>
         </div>
 
         <div class="mb-3">
-            <label class="form-label small fw-bold text-muted ms-2">Password</label>
+            <label class="form-label small fw-bold text-muted ms-2">{% trans "Password" %}</label>
             <input type="password" name="password" id="password" class="form-control form-control-custom" placeholder="••••••••" required>
         </div>
 
         <div class="mb-4">
-            <label class="form-label small fw-bold text-muted ms-2">Confirm Password</label>
+            <label class="form-label small fw-bold text-muted ms-2">{% trans "Confirm Password" %}</label>
             <input type="password" name="confirm_password" id="confirm_password" class="form-control form-control-custom" placeholder="••••••••" required>
-            <div id="passwordError" class="text-danger small ms-2 mt-1" style="display: none;">Parollar mos kelmadi!</div>
+            <div id="passwordError" class="text-danger small ms-2 mt-1" style="display: none;">
+                {% trans "Passwords do not match!" %}
+            </div>
         </div>
 
-        <button type="submit" class="btn btn-register w-100 mb-3 shadow-sm">Create Account</button>
+        <button type="submit" class="btn btn-register w-100 mb-3 shadow-sm">{% trans "Create Account" %}</button>
     </form>
 
     <div class="text-center">
         <p class="small text-muted mb-0">
-            Already have an account? <a href="{% url 'login' %}" class="text-decoration-none fw-bold text-primary">Sign In</a>
+            {% trans "Already have an account?" %} <a href="{% url 'login' %}" class="text-decoration-none fw-bold text-primary">{% trans "Sign In" %}</a>
         </p>
     </div>
 </div>

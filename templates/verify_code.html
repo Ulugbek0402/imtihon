@@ -1,8 +1,11 @@
+{% load i18n %}
 <!DOCTYPE html>
-<html lang="en">
+{% get_current_language as LANGUAGE_CODE %}
+<html lang="{{ LANGUAGE_CODE }}">
 <head>
     <meta charset="UTF-8">
-    <title>Verify Code | FinanceHome</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% trans "Verify Code | FinanceHome" %}</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <style>
         body { background: #f0f2f5; height: 100vh; display: flex; align-items: center; justify-content: center; }
@@ -12,8 +15,10 @@
 </head>
 <body>
     <div class="card auth-card bg-white">
-        <h4 class="fw-bold text-center mb-3">Verify Code</h4>
-        <p class="text-muted text-center small mb-4">Enter the 6-digit code sent to your email. You have 2 minutes.</p>
+        <h4 class="fw-bold text-center mb-3">{% trans "Verify Code" %}</h4>
+        <p class="text-muted text-center small mb-4">
+            {% trans "Enter the 6-digit code sent to your email. You have 2 minutes." %}
+        </p>
 
         {% if messages %}
             {% for message in messages %}
@@ -24,14 +29,14 @@
         <form method="POST">
             {% csrf_token %}
             <div class="mb-3">
-                <label class="form-label small fw-bold">Verification Code</label>
+                <label class="form-label small fw-bold">{% trans "Verification Code" %}</label>
                 <input type="text" name="code" class="form-control code-input" placeholder="000000" maxlength="6" required>
             </div>
             <div class="mb-4">
-                <label class="form-label small fw-bold">New Password</label>
-                <input type="password" name="password" class="form-control" placeholder="Enter new password" required>
+                <label class="form-label small fw-bold">{% trans "New Password" %}</label>
+                <input type="password" name="password" class="form-control" placeholder="{% trans 'Enter new password' %}" required>
             </div>
-            <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">Reset Password</button>
+            <button type="submit" class="btn btn-primary w-100 py-3 fw-bold">{% trans "Reset Password" %}</button>
         </form>
     </div>
 </body>
