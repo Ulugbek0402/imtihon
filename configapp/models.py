@@ -1,6 +1,7 @@
 from django.db import models
 from django.contrib.auth.models import AbstractUser
 from django.utils import timezone
+from decimal import Decimal
 
 class User(AbstractUser):
     email = models.EmailField(unique=True)
@@ -32,7 +33,7 @@ class ResetCode(models.Model):
 
 class Currency(models.Model):
     code = models.CharField(max_length=3, unique=True)
-    rate = models.DecimalField(max_digits=15, decimal_places=2)
+    rate = models.DecimalField(max_digits=15, decimal_places=2) # 1 USD = X UZS kabi
 
     def __str__(self):
         return self.code
@@ -46,13 +47,20 @@ class Account(models.Model):
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
 
     def __str__(self):
-        return f"{self.name} ({self.user.email})"
+        return f"{self.name} - {self.balance} {self.currency.code}"
 
 class Budget(models.Model):
     TYPES = (('MONTHLY', 'Monthly'), ('STIPEND', 'Stipend'), ('OTHER', 'Other'))
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, choices=TYPES)
-    amount = models.DecimalField(max_digits=20, decimal_places=2)
+    category = models.CharField(max_length=100) # Masalan: "Food", "Rent"
+    amount_limit = models.DecimalField(max_digits=20, decimal_places=2)
+    currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
+    month = models.IntegerField(default=timezone.now().month)
+    year = models.IntegerField(default=timezone.now().year)
+
+    def __str__(self):
+        return f"{self.category} Budget ({self.month}/{self.year})"
 
 class Transaction(models.Model):
     TYPES = (('INCOME', 'Income'), ('EXPENSE', 'Expense'))
@@ -67,6 +75,7 @@ class RecurringTransaction(models.Model):
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     type = models.CharField(max_length=10, choices=Transaction.TYPES)
+    category = models.CharField(max_length=100) # Masalan: "Ijara", "Gym"
     frequency = models.CharField(max_length=10, choices=FREQUENCIES)
     next_date = models.DateField()
 
