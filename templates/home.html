@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>FinanceHome</title>
+    <title>FinanceHome | Dashboard</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
@@ -14,6 +14,8 @@
             background: #ffffff;
             border-right: 1px solid #e0e0e0;
             padding: 30px 20px;
+            display: flex;
+            flex-direction: column;
         }
         .main-content { margin-left: 260px; padding: 40px; }
         .nav-link { color: #555; padding: 12px; border-radius: 10px; margin-bottom: 5px; font-weight: 500; }
@@ -26,6 +28,7 @@
             padding: 30px;
             border-radius: 25px;
         }
+        .logout-link { margin-top: auto; color: #dc3545 !important; font-weight: bold; }
     </style>
 </head>
 <body>
@@ -34,16 +37,20 @@
     <h4 class="fw-bold text-primary mb-5">💰 FinanceHome</h4>
     <ul class="nav flex-column">
         <li class="nav-item"><a class="nav-link active" href="{% url 'home' %}">Home</a></li>
-        <li class="nav-item"><a class="nav-link" href="#">Transactions</a></li>
+        <li class="nav-item"><a class="nav-link" href="{% url 'history' %}">Transactions</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Budgets</a></li>
         <li class="nav-item"><a class="nav-link" href="#">Goals</a></li>
         <li class="nav-item"><a class="nav-link" href="/admin/">Admin Panel</a></li>
     </ul>
+    <a class="nav-link logout-link" href="{% url 'logout' %}">Logout</a>
 </div>
 
 <div class="main-content">
     <div class="d-flex justify-content-between align-items-center mb-5">
-        <h2 class="fw-bold">My Overview</h2>
+        <div>
+            <h2 class="fw-bold mb-0">My Overview</h2>
+            <p class="text-muted">Welcome back, {{ request.user.username }}!</p>
+        </div>
         <div class="bg-white p-2 rounded-pill shadow-sm">
             {% for curr in all_currencies %}
             <a href="?currency={{ curr.code }}"
@@ -56,16 +63,16 @@
 
     <div class="row g-4 mb-5">
         <div class="col-lg-5">
-            <div class="gradient-box shadow">
+            <div class="gradient-box shadow h-100 d-flex flex-column justify-content-center">
                 <p class="mb-1 opacity-75">Combined Total Balance</p>
                 <h1 class="display-5 fw-bold">{{ total|floatformat:2 }} {{ selected_currency.code }}</h1>
-                <p class="mt-4 mb-0 small"><span class="bg-white bg-opacity-25 p-1 rounded">Live Rates</span></p>
+                <p class="mt-4 mb-0 small"><span class="bg-white bg-opacity-25 p-1 rounded">Live Exchange Rates</span></p>
             </div>
         </div>
         <div class="col-lg-7">
             <div class="card card-custom p-4 h-100">
                 <h5 class="fw-bold mb-4">Spending Breakdown (%)</h5>
-                <div style="height: 200px;">
+                <div style="height: 220px;">
                     <canvas id="expenseChart"></canvas>
                 </div>
             </div>
@@ -75,17 +82,28 @@
     <div class="row g-4">
         <div class="col-lg-8">
             <div class="card card-custom p-4">
-                <h5 class="fw-bold mb-4">Accounts</h5>
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h5 class="fw-bold">My Accounts</h5>
+                    <button class="btn btn-sm btn-outline-primary px-3">+ Add Account</button>
+                </div>
                 <div class="table-responsive">
                     <table class="table table-borderless align-middle">
-                        <thead><tr class="text-muted small"><th>NAME</th><th>TYPE</th><th class="text-end">BALANCE</th></tr></thead>
+                        <thead>
+                            <tr class="text-muted small border-bottom">
+                                <th class="pb-3">NAME</th>
+                                <th class="pb-3">TYPE</th>
+                                <th class="pb-3 text-end">BALANCE</th>
+                            </tr>
+                        </thead>
                         <tbody>
                             {% for acc in accounts %}
                             <tr style="border-bottom: 1px solid #f8f9fa;">
-                                <td class="fw-bold">{{ acc.name }}</td>
-                                <td><span class="badge bg-secondary-subtle text-secondary">{{ acc.type }}</span></td>
+                                <td class="fw-bold py-3">{{ acc.name }}</td>
+                                <td><span class="badge bg-secondary-subtle text-secondary">{{ acc.get_type_display }}</span></td>
                                 <td class="text-end fw-bold text-primary">{{ acc.balance }} {{ acc.currency.code }}</td>
                             </tr>
+                            {% empty %}
+                            <tr><td colspan="3" class="text-center py-4 text-muted">No accounts found.</td></tr>
                             {% endfor %}
                         </tbody>
                     </table>
@@ -103,11 +121,16 @@
                         <span class="text-muted">{{ goal.current_amount|floatformat:0 }} / {{ goal.target_amount|floatformat:0 }}</span>
                     </div>
                     <div class="progress" style="height: 10px; border-radius: 10px;">
-                        <div class="progress-bar bg-primary shadow-sm" style="width: 60%"></div>
+                        <div class="progress-bar bg-primary shadow-sm"
+                             style="width: {{ goal.get_progress_percent }}%">
+                        </div>
                     </div>
                 </div>
                 {% empty %}
-                <div class="text-center text-muted py-4">No goals added yet.</div>
+                <div class="text-center text-muted py-5">
+                    <p class="mb-0">No goals added yet.</p>
+                    <small>Set a goal to start saving!</small>
+                </div>
                 {% endfor %}
             </div>
         </div>
@@ -116,25 +139,46 @@
 
 <script>
     const ctx = document.getElementById('expenseChart').getContext('2d');
-    new Chart(ctx, {
-        type: 'doughnut',
-        data: {
-            labels: {{ chart_labels|safe }},
-            datasets: [{
-                data: {{ chart_data|safe }},
-                backgroundColor: ['#0d6efd', '#00d4ff', '#ffc107', '#198754', '#dc3545'],
-                borderWidth: 0,
-                hoverOffset: 10
-            }]
-        },
-        options: {
-            maintainAspectRatio: false,
-            plugins: {
-                legend: { position: 'right', labels: { usePointStyle: true, padding: 20 } }
+
+    // Agar ma'lumotlar bo'sh bo'lsa, xunuk ko'rinmasligi uchun tekshiramiz
+    const chartLabels = {{ chart_labels|safe }};
+    const chartData = {{ chart_data|safe }};
+
+    if (chartData.length === 0) {
+        // Ma'lumot yo'q bo'lsa bo'sh doira ko'rsatish
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: ['No Data'],
+                datasets: [{ data: [1], backgroundColor: ['#e9ecef'] }]
+            },
+            options: { cutout: '80%', plugins: { legend: { display: false } } }
+        });
+    } else {
+        new Chart(ctx, {
+            type: 'doughnut',
+            data: {
+                labels: chartLabels,
+                datasets: [{
+                    data: chartData,
+                    backgroundColor: ['#0d6efd', '#00d4ff', '#ffc107', '#198754', '#dc3545', '#6610f2'],
+                    borderWidth: 0,
+                    hoverOffset: 15
+                }]
+            },
+            options: {
+                maintainAspectRatio: false,
+                plugins: {
+                    legend: {
+                        position: 'right',
+                        labels: { usePointStyle: true, padding: 20, font: { size: 12 } }
+                    }
+                }
             }
-        }
-    });
+        });
+    }
 </script>
 
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 </body>
 </html>
