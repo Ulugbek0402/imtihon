@@ -100,14 +100,13 @@ def home_view(request):
     })
 
 
-
 @login_required(login_url='login')
 def add_transaction(request):
     if request.method == "POST":
         account = get_object_or_404(Account, id=request.POST.get('account'), user=request.user)
         amount = Decimal(request.POST.get('amount', '0'))
         t_type = request.POST.get('type')
-        category = request.POST.get('category')
+        category = request.POST.get('category').strip()
 
         if t_type == 'EXPENSE':
             if account.balance < amount:
@@ -115,16 +114,30 @@ def add_transaction(request):
                 return redirect('home')
 
             today = timezone.now()
-            budget = Budget.objects.filter(user=request.user, category=category, month=today.month,
-                                           year=today.year).first()
+            budget = Budget.objects.filter(
+                user=request.user,
+                category__iexact=category,
+                month=today.month,
+                year=today.year
+            ).first()
+
             if budget:
-                spent = Transaction.objects.filter(
+                transactions = Transaction.objects.filter(
                     account__user=request.user,
-                    category=category,
+                    category__iexact=category,
                     type='EXPENSE',
-                    date__month=today.month
-                ).aggregate(s=Sum('amount'))['s'] or 0
-                if (spent + amount) > budget.amount_limit:
+                    date__month=today.month,
+                    date__year=today.year
+                )
+
+                total_spent_in_budget_curr = Decimal('0.00')
+                for t in transactions:
+                    conv = (t.amount / t.account.currency.rate) * budget.currency.rate
+                    total_spent_in_budget_curr += conv
+
+                new_conv_amount = (amount / account.currency.rate) * budget.currency.rate
+
+                if (total_spent_in_budget_curr + new_conv_amount) > budget.amount_limit:
                     messages.warning(request, f"{category} uchun byudjet limitidan oshdingiz!")
 
         if t_type == 'INCOME':
@@ -135,6 +148,7 @@ def add_transaction(request):
         account.save()
         Transaction.objects.create(account=account, amount=amount, type=t_type, category=category)
         messages.success(request, "Tranzaksiya saqlandi!")
+
     return redirect('home')
 
 
@@ -174,25 +188,24 @@ def budget_list(request):
         related_transactions = Transaction.objects.filter(
             account__user=request.user,
             category__iexact=budget.category,
-            type='EXPENSE'
+            type='EXPENSE',
+            date__month=budget.month,
+            date__year=budget.year
         ).order_by('-date')
 
-        total_spent = 0
+        total_spent = Decimal('0.00')
         for t in related_transactions:
-            if t.account.currency != budget.currency:
-                converted = (t.amount * t.account.currency.rate) / budget.currency.rate
-                total_spent += round(converted, 2)
-            else:
-                total_spent += t.amount
+            converted_amount = (t.amount / t.account.currency.rate) * budget.currency.rate
+            total_spent += converted_amount
 
         budget_data.append({
             'info': budget,
             'transactions': related_transactions,
-            'total_spent': total_spent
+            'total_spent': round(total_spent, 2),
+            'percent': int((total_spent / budget.amount_limit) * 100) if budget.amount_limit > 0 else 0
         })
+
     return render(request, 'budgets.html', {'budget_data': budget_data})
-
-
 
 @login_required(login_url='login')
 def add_goal(request):
@@ -218,14 +231,23 @@ def contribute_to_goal(request):
         if account.balance >= amount:
             account.balance -= amount
             account.save()
-            goal.current_amount += (amount * account.currency.rate / goal.currency.rate)
+
+            converted_amount = (amount * account.currency.rate) / goal.currency.rate
+
+            goal.current_amount += converted_amount
             goal.save()
-            Transaction.objects.create(account=account, amount=amount, type='EXPENSE', category=f"Goal: {goal.title}")
-            messages.success(request, "Maqsadga pul qo'shildi!")
+
+            Transaction.objects.create(
+                account=account,
+                amount=amount,
+                type='EXPENSE',
+                category=f"Goal: {goal.title}"
+            )
+            messages.success(request, f"Maqsadga {round(converted_amount, 2)} {goal.currency.code} qo'shildi!")
         else:
             messages.error(request, "Mablag' yetarli emas!")
-    return redirect('home')
 
+    return redirect('home')
 
 
 def login_view(request):
