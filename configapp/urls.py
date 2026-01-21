@@ -9,9 +9,7 @@ router.register(r'goals', views.GoalViewSet, basename='goal')
 
 urlpatterns = [
     path('', views.home_view, name='home'),
-    path('admin-panel/', views.admin_dashboard, name='admin_panel'),
-    path('admin-panel/manage/<str:model_name>/', views.admin_manage_model, name='admin_manage'),
-    path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
+    path('history/', views.history_view, name='history'),
 
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
@@ -20,17 +18,17 @@ urlpatterns = [
     path('verify-code/<int:user_id>/', views.verify_code, name='verify_code'),
     path('change-password/', views.change_password, name='change_password'),
 
-
-    path('history/', views.history_view, name='history'),
+    path('add-account/', views.add_account, name='add_account'),
+    path('add-transaction/', views.add_transaction, name='add_transaction'),
+    path('add-budget/', views.add_budget, name='add_budget'),
+    path('add-goal/', views.add_goal, name='add_goal'),
     path('budgets/', views.budget_list, name='budget_list'),
     path('goals-history/', views.goals_history, name='goals_history'),
-    path('add-transaction/', views.add_transaction, name='add_transaction'),
-    path('add-account/', views.add_account, name='add_account'),
-    path('add-budget/', views.add_budget, name='add_budget'),
     path('contribute-goal/', views.contribute_to_goal, name='contribute_to_goal'),
-    path('add-goal/', views.add_goal, name='add_goal'),
 
-
+    path('admin-panel/', views.admin_dashboard, name='admin_panel'),
+    path('admin-panel/manage/<str:model_name>/', views.admin_manage_model, name='admin_manage'),
+    path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
 
     path('api/', include(router.urls)),
 ]

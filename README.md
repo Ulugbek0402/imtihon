@@ -8,3 +8,11 @@ parol: 123
 
 
 2-3 ta user yana dataga qo'shtirib qo'ydim
+
+python manage.py shell -c "
+from configapp.models import Currency;
+Currency.objects.get_or_create(code='UZS', defaults={'rate': 1});
+Currency.objects.get_or_create(code='USD', defaults={'rate': 12800});
+Currency.objects.get_or_create(code='RUB', defaults={'rate': 140});
+print('qoshildi!')
+"

@@ -21,6 +21,9 @@ class User(AbstractUser):
     USERNAME_FIELD = 'email'
     REQUIRED_FIELDS = ['username']
 
+    def __str__(self):
+        return self.email
+
 class ResetCode(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     code = models.CharField(max_length=6)
@@ -33,13 +36,16 @@ class ResetCode(models.Model):
 
 class Currency(models.Model):
     code = models.CharField(max_length=3, unique=True)
-    rate = models.DecimalField(max_digits=15, decimal_places=2) # 1 USD = X UZS kabi
+    rate = models.DecimalField(max_digits=15, decimal_places=2)
 
     def __str__(self):
         return self.code
 
 class Account(models.Model):
-    TYPES = (('CASH', 'Cash'), ('CARD', 'Card'))
+    TYPES = (
+        ('CASH', 'Cash'),
+        ('CARD', 'Card')
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100)
     type = models.CharField(max_length=10, choices=TYPES)
@@ -47,35 +53,48 @@ class Account(models.Model):
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
 
     def __str__(self):
-        return f"{self.name} - {self.balance} {self.currency.code}"
+        return f"{self.name} ({self.currency.code})"
 
 class Budget(models.Model):
-    TYPES = (('MONTHLY', 'Monthly'), ('STIPEND', 'Stipend'), ('OTHER', 'Other'))
+    TYPES = (
+        ('MONTHLY', 'Monthly'),
+        ('STIPEND', 'Stipend'),
+        ('OTHER', 'Other')
+    )
     user = models.ForeignKey(User, on_delete=models.CASCADE)
     name = models.CharField(max_length=100, choices=TYPES)
-    category = models.CharField(max_length=100) # Masalan: "Food", "Rent"
+    category = models.CharField(max_length=100)
     amount_limit = models.DecimalField(max_digits=20, decimal_places=2)
     currency = models.ForeignKey(Currency, on_delete=models.PROTECT)
     month = models.IntegerField(default=timezone.now().month)
     year = models.IntegerField(default=timezone.now().year)
 
     def __str__(self):
-        return f"{self.category} Budget ({self.month}/{self.year})"
+        return f"{self.category} - {self.month}/{self.year}"
 
 class Transaction(models.Model):
-    TYPES = (('INCOME', 'Income'), ('EXPENSE', 'Expense'))
+    TYPES = (
+        ('INCOME', 'Income'),
+        ('EXPENSE', 'Expense')
+    )
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     type = models.CharField(max_length=10, choices=TYPES)
     category = models.CharField(max_length=100)
     date = models.DateTimeField(auto_now_add=True)
 
+    def __str__(self):
+        return f"{self.type}: {self.amount}"
+
 class RecurringTransaction(models.Model):
-    FREQUENCIES = (('WEEKLY', 'Weekly'), ('MONTHLY', 'Monthly'))
+    FREQUENCIES = (
+        ('WEEKLY', 'Weekly'),
+        ('MONTHLY', 'Monthly')
+    )
     account = models.ForeignKey(Account, on_delete=models.CASCADE)
     amount = models.DecimalField(max_digits=20, decimal_places=2)
     type = models.CharField(max_length=10, choices=Transaction.TYPES)
-    category = models.CharField(max_length=100) # Masalan: "Ijara", "Gym"
+    category = models.CharField(max_length=100)
     frequency = models.CharField(max_length=10, choices=FREQUENCIES)
     next_date = models.DateField()
 
@@ -91,3 +110,6 @@ class FinancialGoal(models.Model):
             return 0
         percent = (self.current_amount / self.target_amount) * 100
         return int(min(percent, 100))
+
+    def __str__(self):
+        return self.title

@@ -24,6 +24,8 @@ class TransactionSerializer(serializers.ModelSerializer):
         fields = ['id', 'account', 'amount', 'type', 'category', 'date']
 
 class GoalSerializer(serializers.ModelSerializer):
+    progress_percent = serializers.IntegerField(source='get_progress_percent', read_only=True)
+
     class Meta:
         model = FinancialGoal
-        fields = ['id', 'title', 'target_amount', 'current_amount', 'currency']
+        fields = ['id', 'title', 'target_amount', 'current_amount', 'currency', 'progress_percent']
