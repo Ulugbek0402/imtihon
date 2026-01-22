@@ -1,6 +1,5 @@
 from django.urls import path, include
 from rest_framework.routers import DefaultRouter
-from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
 from . import views
 
 router = DefaultRouter()
@@ -9,11 +8,9 @@ router.register(r'transactions', views.TransactionViewSet, basename='transaction
 router.register(r'goals', views.GoalViewSet, basename='goal')
 
 urlpatterns = [
-    # Main pages
     path('', views.home_view, name='home'),
     path('history/', views.history_view, name='history'),
 
-    # Authentication
     path('login/', views.login_view, name='login'),
     path('register/', views.register_view, name='register'),
     path('logout/', views.logout_view, name='logout'),
@@ -21,7 +18,6 @@ urlpatterns = [
     path('verify-code/<int:user_id>/', views.verify_code, name='verify_code'),
     path('change-password/', views.change_password, name='change_password'),
 
-    # Web forms
     path('add-account/', views.add_account, name='add_account'),
     path('add-transaction/', views.add_transaction, name='add_transaction'),
     path('add-budget/', views.add_budget, name='add_budget'),
@@ -35,8 +31,4 @@ urlpatterns = [
     path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
 
     path('api/', include(router.urls)),
-
-    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
-    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
-    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
 ]
