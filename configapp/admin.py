@@ -39,15 +39,15 @@ class TransactionAdmin(admin.ModelAdmin):
 
 @admin.register(RecurringTransaction)
 class RecurringTransactionAdmin(admin.ModelAdmin):
-    list_display = ('account', 'amount', 'frequency', 'next_date') # next_run_date -> next_date ga o'zgardi
+    list_display = ('account', 'amount', 'frequency', 'next_date')
     list_filter = ('frequency',)
 
 @admin.register(Budget)
 class BudgetAdmin(admin.ModelAdmin):
-    list_display = ('user', 'category', 'amount_limit', 'month', 'year') # start_date/end_date -> month/year ga o'zgardi
+    list_display = ('user', 'category', 'amount_limit', 'month', 'year')
     list_filter = ('month', 'year')
 
 @admin.register(FinancialGoal)
 class FinancialGoalAdmin(admin.ModelAdmin):
-    list_display = ('user', 'title', 'target_amount', 'current_amount') # name -> title ga, deadline olib tashlandi
+    list_display = ('user', 'title', 'target_amount', 'current_amount')
     list_filter = ('currency',)
