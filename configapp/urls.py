@@ -1,43 +1,42 @@
-from rest_framework import serializers
-from .models import User, Account, Transaction, FinancialGoal, Currency
+from django.urls import path, include
+from rest_framework.routers import DefaultRouter
+from drf_spectacular.views import SpectacularAPIView, SpectacularRedocView, SpectacularSwaggerView
+from . import views
 
+router = DefaultRouter()
+router.register(r'accounts', views.AccountViewSet, basename='account')
+router.register(r'transactions', views.TransactionViewSet, basename='transaction')
+router.register(r'goals', views.GoalViewSet, basename='goal')
 
-class CurrencySerializer(serializers.ModelSerializer):
+urlpatterns = [
+    # Main pages
+    path('', views.home_view, name='home'),
+    path('history/', views.history_view, name='history'),
 
-    class Meta:
-        model = Currency
-        fields = ['id', 'code', 'rate']
+    # Authentication
+    path('login/', views.login_view, name='login'),
+    path('register/', views.register_view, name='register'),
+    path('logout/', views.logout_view, name='logout'),
+    path('forgot-password/', views.forgot_password, name='forgot_password'),
+    path('verify-code/<int:user_id>/', views.verify_code, name='verify_code'),
+    path('change-password/', views.change_password, name='change_password'),
 
+    # Web forms
+    path('add-account/', views.add_account, name='add_account'),
+    path('add-transaction/', views.add_transaction, name='add_transaction'),
+    path('add-budget/', views.add_budget, name='add_budget'),
+    path('add-goal/', views.add_goal, name='add_goal'),
+    path('budgets/', views.budget_list, name='budget_list'),
+    path('goals-history/', views.goals_history, name='goals_history'),
+    path('contribute-goal/', views.contribute_to_goal, name='contribute_to_goal'),
 
-class AccountSerializer(serializers.ModelSerializer):
-    currency_code = serializers.CharField(source='currency.code', read_only=True)
+    path('admin-panel/', views.admin_dashboard, name='admin_panel'),
+    path('admin-panel/manage/<str:model_name>/', views.admin_manage_model, name='admin_manage'),
+    path('delete-user/<int:user_id>/', views.delete_user, name='delete_user'),
 
-    class Meta:
-        model = Account
-        fields = ['id', 'name', 'type', 'balance', 'currency', 'currency_code']
+    path('api/', include(router.urls)),
 
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
-
-
-class TransactionSerializer(serializers.ModelSerializer):
-    account_name = serializers.CharField(source='account.name', read_only=True)
-
-    class Meta:
-        model = Transaction
-        fields = ['id', 'account', 'account_name', 'amount', 'type', 'category', 'date']
-        read_only_fields = ['date']
-
-
-class GoalSerializer(serializers.ModelSerializer):
-    progress_percent = serializers.IntegerField(source='get_progress_percent', read_only=True)
-    currency_code = serializers.CharField(source='currency.code', read_only=True)
-
-    class Meta:
-        model = FinancialGoal
-        fields = ['id', 'title', 'target_amount', 'current_amount', 'currency', 'currency_code', 'progress_percent']
-
-    def create(self, validated_data):
-        validated_data['user'] = self.context['request'].user
-        return super().create(validated_data)
+    path('api/schema/', SpectacularAPIView.as_view(), name='schema'),
+    path('api/docs/', SpectacularSwaggerView.as_view(url_name='schema'), name='swagger-ui'),
+    path('api/redoc/', SpectacularRedocView.as_view(url_name='schema'), name='redoc'),
+]

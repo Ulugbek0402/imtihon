@@ -1,11 +1,29 @@
+from django.shortcuts import render, redirect, get_object_or_404
+from django.db.models import Sum
+from django.utils import timezone
+from django.contrib.auth import login, authenticate, logout, get_user_model, update_session_auth_hash
+from django.contrib.auth.decorators import login_required, user_passes_test
+from django.contrib import messages
+from django.core.mail import send_mail
+from django.conf import settings
+from django.contrib.auth.forms import PasswordChangeForm
+from decimal import Decimal
+import random
+
 from rest_framework import viewsets, status
 from rest_framework.decorators import action
 from rest_framework.response import Response
 from drf_spectacular.utils import extend_schema, extend_schema_view, OpenApiParameter
 from drf_spectacular.types import OpenApiTypes
 
-from configapp.models import Transaction, FinancialGoal
-from configapp.serializers import AccountSerializer, TransactionSerializer, GoalSerializer
+from .models import Account, Transaction, FinancialGoal, Currency, ResetCode, RecurringTransaction, Budget
+from .serializers import AccountSerializer, TransactionSerializer, GoalSerializer
+
+User = get_user_model()
+
+
+def is_admin(user):
+    return user.is_superuser
 
 
 @extend_schema_view(
@@ -92,11 +110,9 @@ class TransactionViewSet(viewsets.ModelViewSet):
     def get_queryset(self):
         queryset = Transaction.objects.filter(account__user=self.request.user)
 
-
         transaction_type = self.request.query_params.get('type', None)
         if transaction_type:
             queryset = queryset.filter(type=transaction_type)
-
 
         category = self.request.query_params.get('category', None)
         if category:
