@@ -53,12 +53,9 @@ python manage.py createsuperuser
 
 ---
 ```bash
-python manage.py shell -c "
-from configapp.models import Currency;
-Currency.objects.get_or_create(code='UZS', defaults={'name': 'O‘zbek so‘mi', 'symbol': 'so‘m', 'rate': 1});
-Currency.objects.get_or_create(code='USD', defaults={'name': 'US Dollar', 'symbol': '$', 'rate': 12800});
-Currency.objects.get_or_create(code='RUB', defaults={'name': 'Russian Ruble', 'symbol': '₽', 'rate': 140});
-print('Valyutalar va kurslar muvaffaqiyatli qo\'shildi!')
+python manage.py shell -c "from configapp.models import Currency; \
+Currency.objects.get_or_create(code='USD', defaults={'name':'US Dollar','symbol':'$','rate':12800}); \
+Currency.objects.get_or_create(code='UZS', defaults={'name':'Oʻzbek soʻmi','symbol':'soʻm','rate':1})"
 "
 
 ```
