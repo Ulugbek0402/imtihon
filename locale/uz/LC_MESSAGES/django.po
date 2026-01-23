@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-21 02:02+0500\n"
+"POT-Creation-Date: 2026-01-23 13:18+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -16,21 +16,184 @@ msgstr ""
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
 "Plural-Forms: nplurals=1; plural=0;\n"
-#: .\config\settings.py:143
+
+#: .\config\settings.py:156
 msgid "English"
 msgstr "Ingliz tili"
 
-#: .\config\settings.py:144
+#: .\config\settings.py:157
 msgid "Uzbek"
 msgstr "O'zbek tili"
 
-#: .\config\settings.py:145
+#: .\config\settings.py:158
 msgid "Russian"
 msgstr "Rus tili"
 
+#: .\configapp\views.py:45
+#, python-format
+msgid "Auto: %(category)s"
+msgstr "Avto: %(category)s"
+
+#: .\configapp\views.py:115 .\configapp\views.py:249
+msgid "Mablag' yetarli emas!"
+msgstr "Mablag' yetarli emas!"
+
+#: .\configapp\views.py:143
+#, python-format
+msgid "%(category)s uchun byudjet limitidan oshdingiz!"
+msgstr "%(category)s uchun byudjet limitidan oshdingiz!"
+
+#: .\configapp\views.py:152
+msgid "Tranzaksiya saqlandi!"
+msgstr "Tranzaksiya saqlandi!"
+
+#: .\configapp\views.py:165
+msgid "Hisob muvaffaqiyatli qo'shildi!"
+msgstr "Hisob muvaffaqiyatli qo'shildi!"
+
+#: .\configapp\views.py:179
+msgid "Byudjet belgilandi!"
+msgstr "Byudjet belgilandi!"
+
+#: .\configapp\views.py:220
+msgid "Yangi maqsad qo'shildi!"
+msgstr "Yangi maqsad qo'shildi!"
+
+#: .\configapp\views.py:242
+#, python-format
+msgid "Goal: %(title)s"
+msgstr "Maqsad: %(title)s"
+
+#: .\configapp\views.py:244
+#, python-format
+msgid "Maqsadga %(amount)s %(code)s qo'shildi!"
+msgstr "Maqsadga %(amount)s %(code)s qo'shildi!"
+
+#: .\configapp\views.py:261
+msgid "Email yoki parol noto'g'ri!"
+msgstr "Email yoki parol noto'g'ri!"
+
+#: .\configapp\views.py:274
+msgid "Parollar mos kelmadi yoki foydalanuvchi mavjud."
+msgstr "Parollar mos kelmadi yoki foydalanuvchi mavjud."
+
+#: .\configapp\views.py:290
+msgid "FinanceHome - Tasdiqlash kodi"
+msgstr "FinanceHome - Tasdiqlash kodi"
+
+#: .\configapp\views.py:291
+#, python-format
+msgid "Sizning tasdiqlash kodingiz: %(code)s"
+msgstr "Sizning tasdiqlash kodingiz: %(code)s"
+
+#: .\configapp\views.py:295
+msgid "Kod yuborildi!"
+msgstr "Kod yuborildi!"
+
+#: .\configapp\views.py:298
+msgid "Email yuborishda xatolik yuz berdi."
+msgstr "Email yuborishda xatolik yuz berdi."
+
+#: .\configapp\views.py:300
+msgid "Foydalanuvchi topilmadi."
+msgstr "Foydalanuvchi topilmadi."
+
+#: .\configapp\views.py:309
+msgid "Parol muvaffaqiyatli o'zgartirildi!"
+msgstr "Parol muvaffaqiyatli o'zgartirildi!"
+
+#: .\configapp\views.py:312
+msgid "Kod noto'g'ri yoki muddati o'tgan."
+msgstr "Kod noto'g'ri yoki muddati o'tgan."
+
+#: .\configapp\views.py:322
+msgid "Parol o'zgartirildi!"
+msgstr "Parol o'zgartirildi!"
+
+#: .\configapp\views.py:360 .\configapp\views.py:363
+msgid "User"
+msgstr "Foydalanuvchi"
+
+#: .\configapp\views.py:360 .\configapp\views.py:362
+msgid "Name"
+msgstr "Nomi"
+
+#: .\configapp\views.py:360
+msgid "Balance"
+msgstr "Balans"
+
+#: .\configapp\views.py:360 .\templates\home.html:198
+#: .\templates\home.html:226 .\templates\home.html:245
+msgid "Currency"
+msgstr "Valyuta"
+
+#: .\configapp\views.py:361 .\templates\history.html:98
+#: .\templates\home.html:91 .\templates\home.html:264
+msgid "Account"
+msgstr "Hisob"
+
+#: .\configapp\views.py:361 .\templates\history.html:101
+#: .\templates\home.html:275 .\templates\home.html:304
+msgid "Amount"
+msgstr "Miqdor"
+
+#: .\configapp\views.py:361 .\templates\history.html:100
+#: .\templates\home.html:271
+msgid "Type"
+msgstr "Turi"
+
+#: .\configapp\views.py:361 .\templates\history.html:99
+#: .\templates\home.html:223 .\templates\home.html:279
+msgid "Category"
+msgstr "Kategoriya"
+
+#: .\configapp\views.py:362
+msgid "Code"
+msgstr "Kod"
+
+#: .\configapp\views.py:362
+msgid "Rate"
+msgstr "Kurs"
+
+#: .\configapp\views.py:363 .\templates\home.html:195
+msgid "Title"
+msgstr "Sarlavha"
+
+#: .\configapp\views.py:363
+msgid "Target"
+msgstr "Maqsad"
+
+#: .\configapp\views.py:363
+msgid "Current"
+msgstr "Joriy"
+
+#: .\configapp\views.py:379
+msgid "Barcha hisoblarni olish"
+msgstr "Barcha hisoblarni olish"
+
+#: .\configapp\views.py:380
+msgid "Yangi hisob yaratish"
+msgstr "Yangi hisob yaratish"
+
+#: .\configapp\views.py:388
+msgid "Barcha tranzaksiyalarni olish"
+msgstr "Barcha tranzaksiyalarni olish"
+
+#: .\configapp\views.py:389
+msgid "Yangi tranzaksiya yaratish"
+msgstr "Yangi tranzaksiya yaratish"
+
+#: .\configapp\views.py:404
+msgid "Barcha maqsadlarni olish"
+msgstr "Barcha maqsadlarni olish"
+
+#: .\configapp\views.py:405
+msgid "Yangi maqsad yaratish"
+msgstr "Yangi maqsad yaratish"
+
 #: .\templates\admin\base_site.html:4 .\templates\admin_model_list.html:8
 msgid "FinanceHome Admin"
-msgstr "FinanceHome Adminstratori"
+msgstr "FinanceHome Admin"
 
 #: .\templates\admin\base_site.html:26
 msgid "Super Control"
@@ -51,20 +214,17 @@ msgstr "FinanceHome | Admin paneli"
 #: .\templates\admin_custom.html:40 .\templates\budgets.html:34
 #: .\templates\change_password.html:38 .\templates\goals_history.html:35
 #: .\templates\history.html:45 .\templates\home.html:43
-#: .\templates\login.html:43
 msgid "Dashboard"
 msgstr "Boshqaruv paneli"
 
 #: .\templates\admin_custom.html:44 .\templates\budgets.html:50
 #: .\templates\change_password.html:44 .\templates\goals_history.html:42
 #: .\templates\history.html:52 .\templates\home.html:51
-#: .\templates\login.html:51
 msgid "Language"
 msgstr "Til"
 
 #: .\templates\admin_custom.html:60 .\templates\goals_history.html:58
 #: .\templates\history.html:67 .\templates\home.html:64
-#: .\templates\login.html:64
 msgid "Logout"
 msgstr "Chiqish"
 
@@ -91,9 +251,8 @@ msgstr "Faol hisoblar"
 #: .\templates\admin_custom.html:93 .\templates\admin_custom.html:115
 #: .\templates\budgets.html:39 .\templates\goals_history.html:36
 #: .\templates\history.html:46 .\templates\home.html:44
-#: .\templates\login.html:44
 msgid "Transactions"
-msgstr "O'tkazmalar"
+msgstr "Tranzaksiyalar"
 
 #: .\templates\admin_custom.html:98
 msgid "Database Management"
@@ -133,7 +292,7 @@ msgstr "AMAL"
 
 #: .\templates\admin_custom.html:166
 msgid "Delete user"
-msgstr "Foydalanuvchini o'chirish"
+msgstr "O'chirish"
 
 #: .\templates\admin_model_list.html:32
 msgid "Back to Dashboard"
@@ -157,29 +316,28 @@ msgstr "CHIQIM"
 
 #: .\templates\admin_model_list.html:107
 msgid "No data available yet"
-msgstr "Ma'lumotlar hali mavjud emas"
+msgstr "Hozircha ma'lumot yo'q"
 
 #: .\templates\budgets.html:8
 msgid "Budget History | FinanceHome"
-msgstr "Budjet tarixi | FinanceHome"
+msgstr "Byudjet tarixi | FinanceHome"
 
 #: .\templates\budgets.html:44 .\templates\goals_history.html:38
 #: .\templates\history.html:47 .\templates\home.html:46
-#: .\templates\login.html:46
 msgid "Budgets"
-msgstr "Budjetlar"
+msgstr "Byudjetlar"
 
 #: .\templates\budgets.html:66
 msgid "Budget History"
-msgstr "Budjet tarixi"
+msgstr "Byudjet tarixi"
 
 #: .\templates\budgets.html:73
 msgid "Limit"
-msgstr "Cheklov"
+msgstr "Limit"
 
 #: .\templates\budgets.html:76
 msgid "Spent"
-msgstr "Sarflangan"
+msgstr "Sarflandi"
 
 #: .\templates\budgets.html:84
 msgid "DATE"
@@ -195,11 +353,11 @@ msgstr "MIQDOR"
 
 #: .\templates\budgets.html:99
 msgid "No expenses for this budget yet."
-msgstr "Ushbu budjet bo'yicha hali xarajatlar yo'q."
+msgstr "Ushbu byudjet uchun hali chiqimlar yo'q."
 
 #: .\templates\budgets.html:111
 msgid "No budgets found. Create one in Dashboard!"
-msgstr "Budjetlar topilmadi. Panelda yangisini yarating!"
+msgstr "Byudjetlar topilmadi. Panelda yangisini yarating!"
 
 #: .\templates\change_password.html:8
 msgid "Change Password | FinanceHome"
@@ -211,7 +369,7 @@ msgstr "Parolni o'zgartirish"
 
 #: .\templates\change_password.html:66
 msgid "Secure your account by updating your credentials"
-msgstr "Ma'lumotlaringizni yangilab, hisobingiz xavfsizligini ta'minlang"
+msgstr "Hisobingizni yangilash orqali himoyalang"
 
 #: .\templates\change_password.html:83
 msgid "Update Password"
@@ -227,11 +385,12 @@ msgstr "Parolni tiklash"
 
 #: .\templates\forgot_password.html:75
 msgid "Enter your email and we'll send a 6-digit verification code."
-msgstr "Emailingizni kiriting va biz sizga 6 xonali tasdiqlash kodini yuboramiz."
+msgstr "Emailingizni kiriting, biz 6 xonali tasdiqlash kodini yuboramiz."
 
-#: .\templates\forgot_password.html:81 .\templates\register.html:79
+#: .\templates\forgot_password.html:81 .\templates\login.html:130
+#: .\templates\register.html:79
 msgid "Email Address"
-msgstr "Email manzili"
+msgstr "Email manzil"
 
 #: .\templates\forgot_password.html:83
 msgid "Enter your email"
@@ -239,7 +398,7 @@ msgstr "Emailingizni kiriting"
 
 #: .\templates\forgot_password.html:87
 msgid "Send Code"
-msgstr "Kodni yuborish"
+msgstr "Kod yuborish"
 
 #: .\templates\forgot_password.html:91
 msgid "Back to Login"
@@ -250,7 +409,6 @@ msgid "Goals History | FinanceHome"
 msgstr "Maqsadlar tarixi | FinanceHome"
 
 #: .\templates\goals_history.html:37 .\templates\home.html:45
-#: .\templates\login.html:45
 msgid "Goals History"
 msgstr "Maqsadlar tarixi"
 
@@ -260,7 +418,7 @@ msgstr "Jamg'armalar tarixi"
 
 #: .\templates\goals_history.html:66
 msgid "Track all your contributions towards your financial goals"
-msgstr "Moliyaviy maqsadlaringiz sari qo'shgan barcha hissalaringizni kuzatib boring"
+msgstr "Moliyaviy maqsadlaringiz yo'lidagi barcha hissalaringizni kuzatib boring"
 
 #: .\templates\goals_history.html:74
 msgid "Date"
@@ -280,20 +438,19 @@ msgstr "Qo'shilgan miqdor"
 
 #: .\templates\goals_history.html:106
 msgid "No goal contributions found yet."
-msgstr "Hali maqsadlar bo'yicha hissalar topilmadi."
+msgstr "Hali maqsadlar uchun hissalar topilmadi."
 
 #: .\templates\history.html:8
 msgid "Transactions | FinanceHome"
-msgstr "O'tkazmalar | FinanceHome"
+msgstr "Tranzaksiyalar | FinanceHome"
 
 #: .\templates\history.html:48 .\templates\home.html:47
-#: .\templates\login.html:47
 msgid "Security"
 msgstr "Xavfsizlik"
 
 #: .\templates\history.html:74
 msgid "Transaction History"
-msgstr "O'tkazmalar tarixi"
+msgstr "Tranzaksiyalar tarixi"
 
 #: .\templates\history.html:75
 msgid "Review your past incomes and expenses"
@@ -313,7 +470,7 @@ msgstr "Barcha turlar"
 
 #: .\templates\history.html:84
 msgid "All Transactions"
-msgstr "Barcha o'tkazmalar"
+msgstr "Barcha tranzaksiyalar"
 
 #: .\templates\history.html:86
 msgid "Incomes Only"
@@ -327,99 +484,79 @@ msgstr "Faqat chiqimlar"
 msgid "Date & Time"
 msgstr "Sana va vaqt"
 
-#: .\templates\history.html:98 .\templates\home.html:91
-#: .\templates\home.html:264 .\templates\login.html:91
-msgid "Account"
-msgstr "Hisob"
-
-#: .\templates\history.html:99 .\templates\home.html:223
-#: .\templates\home.html:279
-msgid "Category"
-msgstr "Kategoriya"
-
-#: .\templates\history.html:100 .\templates\home.html:271
-msgid "Type"
-msgstr "Tur"
-
-#: .\templates\history.html:101 .\templates\home.html:275
-#: .\templates\home.html:304
-msgid "Amount"
-msgstr "Miqdor"
-
 #: .\templates\history.html:132
 msgid "No transactions found for this filter."
-msgstr "Ushbu filtr bo'yicha o'tkazmalar topilmadi."
+msgstr "Ushbu filtr bo'yicha tranzaksiyalar topilmadi."
 
-#: .\templates\home.html:8 .\templates\login.html:8
+#: .\templates\home.html:8
 msgid "FinanceHome | Smart Dashboard"
-msgstr "FinanceHome | Aqlli panel"
+msgstr "FinanceHome | Smart Panel"
 
-#: .\templates\home.html:80 .\templates\login.html:80
+#: .\templates\home.html:80
 msgid "Smart Dashboard"
-msgstr "Aqlli boshqaruv paneli"
+msgstr "Smart Panel"
 
-#: .\templates\home.html:81 .\templates\login.html:81
+#: .\templates\home.html:81
 msgid "Manage your wealth and spending habits"
-msgstr "Boyligingiz va xarajat odatlaringizni boshqaring"
+msgstr "Boyligingiz va sarflash odatlaringizni boshqaring"
 
-#: .\templates\home.html:85 .\templates\login.html:85
+#: .\templates\home.html:85
 msgid "Goal"
 msgstr "Maqsad"
 
-#: .\templates\home.html:88 .\templates\login.html:88
+#: .\templates\home.html:88
 msgid "Budget"
-msgstr "Budjet"
+msgstr "Byudjet"
 
-#: .\templates\home.html:94 .\templates\login.html:94
+#: .\templates\home.html:94
 msgid "Transaction"
-msgstr "Amaliyot"
+msgstr "Tranzaksiya"
 
-#: .\templates\home.html:102 .\templates\login.html:102
+#: .\templates\home.html:102
 msgid "Total Net Worth"
 msgstr "Umumiy boylik"
 
-#: .\templates\home.html:113 .\templates\login.html:113
+#: .\templates\home.html:113
 msgid "Spending Analysis"
-msgstr "Xarajatlar tahlili"
+msgstr "Harajatlar tahlili"
 
-#: .\templates\home.html:121 .\templates\login.html:121
+#: .\templates\home.html:121
 msgid "My Accounts"
 msgstr "Mening hisoblarim"
 
-#: .\templates\home.html:122 .\templates\login.html:122
+#: .\templates\home.html:122
 msgid "accounts"
 msgstr "hisoblar"
 
 #: .\templates\home.html:134 .\templates\home.html:250
-#: .\templates\login.html:134
 msgid "Current Balance"
 msgstr "Joriy balans"
 
-#: .\templates\home.html:141 .\templates\login.html:141
+#: .\templates\home.html:141
 msgid "No accounts found. Add a new account."
 msgstr "Hisoblar topilmadi. Yangi hisob qo'shing."
 
-#: .\templates\home.html:151 .\templates\login.html:151
+#: .\templates\home.html:151
 msgid "Monthly Budgets"
-msgstr "Oylik budjetlar"
+msgstr "Oylik byudjetlar"
 
-#: .\templates\home.html:152 .\templates\login.html:152
+#: .\templates\home.html:152
 msgid "View All"
-msgstr "Barchasini ko'rish"
+msgstr "Hammasini ko'rish"
 
-#: .\templates\home.html:163 .\templates\login.html:163
+#: .\templates\home.html:163
 msgid "No active budgets"
-msgstr "Faol budjetlar yo'q"
+msgstr "Faol byudjetlar yo'q"
 
-#: .\templates\home.html:170 .\templates\login.html:170
+#: .\templates\home.html:170
 msgid "Saving Goals"
 msgstr "Jamg'arma maqsadlari"
 
-#: .\templates\home.html:171 .\templates\login.html:171
+#: .\templates\home.html:171
 msgid "Contribute"
 msgstr "Hissa qo'shish"
 
-#: .\templates\home.html:182 .\templates\login.html:182
+#: .\templates\home.html:182
 msgid "No goals yet"
 msgstr "Hali maqsadlar yo'q"
 
@@ -427,18 +564,9 @@ msgstr "Hali maqsadlar yo'q"
 msgid "New Goal"
 msgstr "Yangi maqsad"
 
-#: .\templates\home.html:195
-msgid "Title"
-msgstr "Sarlavha"
-
 #: .\templates\home.html:196
 msgid "Target Amount"
-msgstr "Maqsadli miqdor"
-
-#: .\templates\home.html:198 .\templates\home.html:226
-#: .\templates\home.html:245
-msgid "Currency"
-msgstr "Valyuta"
+msgstr "Maqsad qilingan miqdor"
 
 #: .\templates\home.html:204
 msgid "Add Goal"
@@ -446,11 +574,11 @@ msgstr "Maqsad qo'shish"
 
 #: .\templates\home.html:213
 msgid "Set Budget Plan"
-msgstr "Budjet rejasini o'rnatish"
+msgstr "Byudjet rejasini o'rnatish"
 
 #: .\templates\home.html:216
 msgid "Budget Type"
-msgstr "Budjet turi"
+msgstr "Byudjet turi"
 
 #: .\templates\home.html:218
 msgid "Monthly"
@@ -466,11 +594,11 @@ msgstr "Boshqa"
 
 #: .\templates\home.html:224
 msgid "Limit Amount"
-msgstr "Cheklangan miqdor"
+msgstr "Limit miqdori"
 
 #: .\templates\home.html:232
 msgid "Set Budget"
-msgstr "Budjetni o'rnatish"
+msgstr "Byudjetni o'rnatish"
 
 #: .\templates\home.html:241
 msgid "Connect Account"
@@ -486,7 +614,7 @@ msgstr "Hisob qo'shish"
 
 #: .\templates\home.html:261
 msgid "New Transaction"
-msgstr "Yangi amaliyot"
+msgstr "Yangi tranzaksiya"
 
 #: .\templates\home.html:272
 msgid "Expense"
@@ -512,21 +640,49 @@ msgstr "Maqsadni tanlang"
 msgid "Transfer Savings"
 msgstr "Jamg'armalarni o'tkazish"
 
+#: .\templates\login.html:8
+msgid "FinanceHome | Sign In"
+msgstr "FinanceHome | Kirish"
+
+#: .\templates\login.html:116
+msgid "Welcome Back"
+msgstr "Xush kelibsiz"
+
+#: .\templates\login.html:117
+msgid "Manage your wealth smarter."
+msgstr "Boyligingizni aqlliroq boshqaring."
+
+#: .\templates\login.html:135 .\templates\register.html:84
+msgid "Password"
+msgstr "Parol"
+
+#: .\templates\login.html:136
+msgid "Forgot?"
+msgstr "Unutdingizmi?"
+
+#: .\templates\login.html:142 .\templates\register.html:101
+msgid "Sign In"
+msgstr "Kirish"
+
+#: .\templates\login.html:148
+msgid "Don't have an account?"
+msgstr "Hisobingiz yo'qmi?"
+
+#: .\templates\login.html:149
+msgid "Sign Up"
+msgstr "Ro'yxatdan o'tish"
+
 #: .\templates\register.html:8
 msgid "Create Account | FinanceHome"
 msgstr "Hisob yaratish | FinanceHome"
 
 #: .\templates\register.html:66
 msgid "Join Us Today!"
-msgstr "Bugun bizga qo'shiling!"
+msgstr "Bizga qo'shiling!"
 
 #: .\templates\register.html:67
 msgid "Start managing your wealth smarter."
 msgstr "Boyligingizni aqlliroq boshqarishni boshlang."
-
-#: .\templates\register.html:84
-msgid "Password"
-msgstr "Parol"
 
 #: .\templates\register.html:89
 msgid "Confirm Password"
@@ -543,10 +699,6 @@ msgstr "Hisob yaratish"
 #: .\templates\register.html:101
 msgid "Already have an account?"
 msgstr "Hisobingiz bormi?"
-
-#: .\templates\register.html:101
-msgid "Sign In"
-msgstr "Kirish"
 
 #: .\templates\verify_code.html:8
 msgid "Verify Code | FinanceHome"

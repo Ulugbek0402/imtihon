@@ -82,7 +82,6 @@ REST_FRAMEWORK = {
 
 SPECTACULAR_SETTINGS = {
     'TITLE': 'FinanceHome API',
-    'DESCRIPTION': 'Shaxsiy moliyaviy boshqaruv tizimi uchun REST API',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
     'COMPONENT_SPLIT_REQUEST': True,

@@ -8,36 +8,197 @@ msgid ""
 msgstr ""
 "Project-Id-Version: PACKAGE VERSION\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-01-21 02:02+0500\n"
+"POT-Creation-Date: 2026-01-23 13:18+0500\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"Plural-Forms: nplurals=4; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && "
-"n%10<=4 && (n%100<12 || n%100>14) ? 1 : n%10==0 || (n%10>=5 && n%10<=9) || "
-"(n%100>=11 && n%100<=14)? 2 : 3);\n"
-#: .\config\settings.py:143
-#: .\config\settings.py:143
+"Plural-Forms: nplurals=3; plural=(n%10==1 && n%100!=11 ? 0 : n%10>=2 && n"
+"%10<=4 && (n%100<10 || n%100>=20) ? 1 : 2);\n"
+
+#: .\config\settings.py:156
 msgid "English"
 msgstr "Английский"
 
-#: .\config\settings.py:144
+#: .\config\settings.py:157
 msgid "Uzbek"
 msgstr "Узбекский"
 
-#: .\config\settings.py:145
+#: .\config\settings.py:158
 msgid "Russian"
 msgstr "Русский"
 
+#: .\configapp\views.py:45
+#, python-format
+msgid "Auto: %(category)s"
+msgstr "Авто: %(category)s"
+
+#: .\configapp\views.py:115 .\configapp\views.py:249
+msgid "Mablag' yetarli emas!"
+msgstr "Недостаточно средств!"
+
+#: .\configapp\views.py:143
+#, python-format
+msgid "%(category)s uchun byudjet limitidan oshdingiz!"
+msgstr "Превышен лимит бюджета для категории %(category)s!"
+
+#: .\configapp\views.py:152
+msgid "Tranzaksiya saqlandi!"
+msgstr "Транзакция сохранена!"
+
+#: .\configapp\views.py:165
+msgid "Hisob muvaffaqiyatli qo'shildi!"
+msgstr "Счет успешно добавлен!"
+
+#: .\configapp\views.py:179
+msgid "Byudjet belgilandi!"
+msgstr "Бюджет установлен!"
+
+#: .\configapp\views.py:220
+msgid "Yangi maqsad qo'shildi!"
+msgstr "Новая цель добавлена!"
+
+#: .\configapp\views.py:242
+#, python-format
+msgid "Goal: %(title)s"
+msgstr "Цель: %(title)s"
+
+#: .\configapp\views.py:244
+#, python-format
+msgid "Maqsadga %(amount)s %(code)s qo'shildi!"
+msgstr "В цель добавлено %(amount)s %(code)s!"
+
+#: .\configapp\views.py:261
+msgid "Email yoki parol noto'g'ri!"
+msgstr "Неверный Email или пароль!"
+
+#: .\configapp\views.py:274
+msgid "Parollar mos kelmadi yoki foydalanuvchi mavjud."
+msgstr "Пароли не совпадают или пользователь уже существует."
+
+#: .\configapp\views.py:290
+msgid "FinanceHome - Tasdiqlash kodi"
+msgstr "FinanceHome - Код подтверждения"
+
+#: .\configapp\views.py:291
+#, python-format
+msgid "Sizning tasdiqlash kodingiz: %(code)s"
+msgstr "Ваш код подтверждения: %(code)s"
+
+#: .\configapp\views.py:295
+msgid "Kod yuborildi!"
+msgstr "Код отправлен!"
+
+#: .\configapp\views.py:298
+msgid "Email yuborishda xatolik yuz berdi."
+msgstr "Ошибка при отправке Email."
+
+#: .\configapp\views.py:300
+msgid "Foydalanuvchi topilmadi."
+msgstr "Пользователь не найден."
+
+#: .\configapp\views.py:309
+msgid "Parol muvaffaqiyatli o'zgartirildi!"
+msgstr "Пароль успешно изменен!"
+
+#: .\configapp\views.py:312
+msgid "Kod noto'g'ri yoki muddati o'tgan."
+msgstr "Код неверный или срок действия истек."
+
+#: .\configapp\views.py:322
+msgid "Parol o'zgartirildi!"
+msgstr "Пароль изменен!"
+
+#: .\configapp\views.py:360 .\configapp\views.py:363
+msgid "User"
+msgstr "Пользователь"
+
+#: .\configapp\views.py:360 .\configapp\views.py:362
+msgid "Name"
+msgstr "Имя"
+
+#: .\configapp\views.py:360
+msgid "Balance"
+msgstr "Баланс"
+
+#: .\configapp\views.py:360 .\templates\home.html:198
+#: .\templates\home.html:226 .\templates\home.html:245
+msgid "Currency"
+msgstr "Валюта"
+
+#: .\configapp\views.py:361 .\templates\history.html:98
+#: .\templates\home.html:91 .\templates\home.html:264
+msgid "Account"
+msgstr "Счет"
+
+#: .\configapp\views.py:361 .\templates\history.html:101
+#: .\templates\home.html:275 .\templates\home.html:304
+msgid "Amount"
+msgstr "Сумма"
+
+#: .\configapp\views.py:361 .\templates\history.html:100
+#: .\templates\home.html:271
+msgid "Type"
+msgstr "Тип"
+
+#: .\configapp\views.py:361 .\templates\history.html:99
+#: .\templates\home.html:223 .\templates\home.html:279
+msgid "Category"
+msgstr "Категория"
+
+#: .\configapp\views.py:362
+msgid "Code"
+msgstr "Код"
+
+#: .\configapp\views.py:362
+msgid "Rate"
+msgstr "Курс"
+
+#: .\configapp\views.py:363 .\templates\home.html:195
+msgid "Title"
+msgstr "Заголовок"
+
+#: .\configapp\views.py:363
+msgid "Target"
+msgstr "Цель"
+
+#: .\configapp\views.py:363
+msgid "Current"
+msgstr "Текущий"
+
+#: .\configapp\views.py:379
+msgid "Barcha hisoblarni olish"
+msgstr "Получить все счета"
+
+#: .\configapp\views.py:380
+msgid "Yangi hisob yaratish"
+msgstr "Создать новый счет"
+
+#: .\configapp\views.py:388
+msgid "Barcha tranzaksiyalarni olish"
+msgstr "Получить все транзакции"
+
+#: .\configapp\views.py:389
+msgid "Yangi tranzaksiya yaratish"
+msgstr "Создать новую транзакцию"
+
+#: .\configapp\views.py:404
+msgid "Barcha maqsadlarni olish"
+msgstr "Получить все цели"
+
+#: .\configapp\views.py:405
+msgid "Yangi maqsad yaratish"
+msgstr "Создать новую цель"
+
 #: .\templates\admin\base_site.html:4 .\templates\admin_model_list.html:8
 msgid "FinanceHome Admin"
-msgstr "Админ FinanceHome"
+msgstr "Админ-панель FinanceHome"
 
 #: .\templates\admin\base_site.html:26
 msgid "Super Control"
-msgstr "Супер контроль"
+msgstr "Супер Контроль"
 
 #: .\templates\admin\index.html:40
 msgid "Welcome"
@@ -49,25 +210,22 @@ msgstr "Сегодня вы можете управлять всеми фина�
 
 #: .\templates\admin_custom.html:8
 msgid "FinanceHome | Admin Dashboard"
-msgstr "FinanceHome | Панель администратора"
+msgstr "FinanceHome | Админ-панель"
 
 #: .\templates\admin_custom.html:40 .\templates\budgets.html:34
 #: .\templates\change_password.html:38 .\templates\goals_history.html:35
 #: .\templates\history.html:45 .\templates\home.html:43
-#: .\templates\login.html:43
 msgid "Dashboard"
 msgstr "Панель управления"
 
 #: .\templates\admin_custom.html:44 .\templates\budgets.html:50
 #: .\templates\change_password.html:44 .\templates\goals_history.html:42
 #: .\templates\history.html:52 .\templates\home.html:51
-#: .\templates\login.html:51
 msgid "Language"
 msgstr "Язык"
 
 #: .\templates\admin_custom.html:60 .\templates\goals_history.html:58
 #: .\templates\history.html:67 .\templates\home.html:64
-#: .\templates\login.html:64
 msgid "Logout"
 msgstr "Выйти"
 
@@ -81,7 +239,7 @@ msgstr "Управление системными данными и пользо
 
 #: .\templates\admin_custom.html:73
 msgid "System Active"
-msgstr "Система активна"
+msgstr "Система Активна"
 
 #: .\templates\admin_custom.html:81
 msgid "Total Users"
@@ -94,7 +252,6 @@ msgstr "Активные счета"
 #: .\templates\admin_custom.html:93 .\templates\admin_custom.html:115
 #: .\templates\budgets.html:39 .\templates\goals_history.html:36
 #: .\templates\history.html:46 .\templates\home.html:44
-#: .\templates\login.html:44
 msgid "Transactions"
 msgstr "Транзакции"
 
@@ -120,7 +277,7 @@ msgstr "Список пользователей"
 
 #: .\templates\admin_custom.html:132
 msgid "EMAIL"
-msgstr "EMAIL"
+msgstr "ЭЛ. ПОЧТА"
 
 #: .\templates\admin_custom.html:133
 msgid "ACCOUNTS"
@@ -160,7 +317,7 @@ msgstr "РАСХОД"
 
 #: .\templates\admin_model_list.html:107
 msgid "No data available yet"
-msgstr "Данные пока отсутствуют"
+msgstr "Данных пока нет"
 
 #: .\templates\budgets.html:8
 msgid "Budget History | FinanceHome"
@@ -168,7 +325,6 @@ msgstr "История бюджета | FinanceHome"
 
 #: .\templates\budgets.html:44 .\templates\goals_history.html:38
 #: .\templates\history.html:47 .\templates\home.html:46
-#: .\templates\login.html:46
 msgid "Budgets"
 msgstr "Бюджеты"
 
@@ -198,11 +354,11 @@ msgstr "СУММА"
 
 #: .\templates\budgets.html:99
 msgid "No expenses for this budget yet."
-msgstr "Расходов по этому бюджету пока нет."
+msgstr "По этому бюджету расходов еще нет."
 
 #: .\templates\budgets.html:111
 msgid "No budgets found. Create one in Dashboard!"
-msgstr "Бюджеты не найдены. Создайте их в панели управления!"
+msgstr "Бюджеты не найдены. Создайте один в панели управления!"
 
 #: .\templates\change_password.html:8
 msgid "Change Password | FinanceHome"
@@ -214,7 +370,7 @@ msgstr "Изменить пароль"
 
 #: .\templates\change_password.html:66
 msgid "Secure your account by updating your credentials"
-msgstr "Обезопасьте свой аккаунт, обновив данные для входа"
+msgstr "Защитите свой аккаунт, обновив свои учетные данные"
 
 #: .\templates\change_password.html:83
 msgid "Update Password"
@@ -230,15 +386,16 @@ msgstr "Сбросить пароль"
 
 #: .\templates\forgot_password.html:75
 msgid "Enter your email and we'll send a 6-digit verification code."
-msgstr "Введите ваш email, и мы отправим 6-значный код подтверждения."
+msgstr "Введите свой Email, и мы отправим 6-значный код подтверждения."
 
-#: .\templates\forgot_password.html:81 .\templates\register.html:79
+#: .\templates\forgot_password.html:81 .\templates\login.html:130
+#: .\templates\register.html:79
 msgid "Email Address"
 msgstr "Электронная почта"
 
 #: .\templates\forgot_password.html:83
 msgid "Enter your email"
-msgstr "Введите ваш email"
+msgstr "Введите ваш Email"
 
 #: .\templates\forgot_password.html:87
 msgid "Send Code"
@@ -253,7 +410,6 @@ msgid "Goals History | FinanceHome"
 msgstr "История целей | FinanceHome"
 
 #: .\templates\goals_history.html:37 .\templates\home.html:45
-#: .\templates\login.html:45
 msgid "Goals History"
 msgstr "История целей"
 
@@ -290,7 +446,6 @@ msgid "Transactions | FinanceHome"
 msgstr "Транзакции | FinanceHome"
 
 #: .\templates\history.html:48 .\templates\home.html:47
-#: .\templates\login.html:47
 msgid "Security"
 msgstr "Безопасность"
 
@@ -300,7 +455,7 @@ msgstr "История транзакций"
 
 #: .\templates\history.html:75
 msgid "Review your past incomes and expenses"
-msgstr "Просмотрите свои прошлые доходы и расходы"
+msgstr "Просмотр прошлых доходов и расходов"
 
 #: .\templates\history.html:81
 msgid "Incomes"
@@ -330,99 +485,79 @@ msgstr "Только расходы"
 msgid "Date & Time"
 msgstr "Дата и время"
 
-#: .\templates\history.html:98 .\templates\home.html:91
-#: .\templates\home.html:264 .\templates\login.html:91
-msgid "Account"
-msgstr "Счет"
-
-#: .\templates\history.html:99 .\templates\home.html:223
-#: .\templates\home.html:279
-msgid "Category"
-msgstr "Категория"
-
-#: .\templates\history.html:100 .\templates\home.html:271
-msgid "Type"
-msgstr "Тип"
-
-#: .\templates\history.html:101 .\templates\home.html:275
-#: .\templates\home.html:304
-msgid "Amount"
-msgstr "Сумма"
-
 #: .\templates\history.html:132
 msgid "No transactions found for this filter."
 msgstr "Транзакций по этому фильтру не найдено."
 
-#: .\templates\home.html:8 .\templates\login.html:8
+#: .\templates\home.html:8
 msgid "FinanceHome | Smart Dashboard"
 msgstr "FinanceHome | Умная панель"
 
-#: .\templates\home.html:80 .\templates\login.html:80
+#: .\templates\home.html:80
 msgid "Smart Dashboard"
 msgstr "Умная панель"
 
-#: .\templates\home.html:81 .\templates\login.html:81
+#: .\templates\home.html:81
 msgid "Manage your wealth and spending habits"
-msgstr "Управляйте своим капиталом и привычками расходов"
+msgstr "Управляйте своим состоянием и привычками расходов"
 
-#: .\templates\home.html:85 .\templates\login.html:85
+#: .\templates\home.html:85
 msgid "Goal"
 msgstr "Цель"
 
-#: .\templates\home.html:88 .\templates\login.html:88
+#: .\templates\home.html:88
 msgid "Budget"
 msgstr "Бюджет"
 
-#: .\templates\home.html:94 .\templates\login.html:94
+#: .\templates\home.html:94
 msgid "Transaction"
 msgstr "Транзакция"
 
-#: .\templates\home.html:102 .\templates\login.html:102
+#: .\templates\home.html:102
 msgid "Total Net Worth"
 msgstr "Общий капитал"
 
-#: .\templates\home.html:113 .\templates\login.html:113
+#: .\templates\home.html:113
 msgid "Spending Analysis"
 msgstr "Анализ расходов"
 
-#: .\templates\home.html:121 .\templates\login.html:121
+#: .\templates\home.html:121
 msgid "My Accounts"
 msgstr "Мои счета"
 
-#: .\templates\home.html:122 .\templates\login.html:122
+#: .\templates\home.html:122
 msgid "accounts"
-msgstr "счетов"
+msgstr "счета"
 
 #: .\templates\home.html:134 .\templates\home.html:250
-#: .\templates\login.html:134
 msgid "Current Balance"
 msgstr "Текущий баланс"
 
-#: .\templates\home.html:141 .\templates\login.html:141
+#: .\templates\home.html:141
 msgid "No accounts found. Add a new account."
 msgstr "Счета не найдены. Добавьте новый счет."
 
-#: .\templates\home.html:151 .\templates\login.html:151
+#: .\templates\home.html:151
 msgid "Monthly Budgets"
-msgstr "Месячные бюджеты"
+msgstr "Ежемесячные бюджеты"
 
-#: .\templates\home.html:152 .\templates\login.html:152
+#: .\templates\home.html:152
 msgid "View All"
 msgstr "Смотреть все"
 
-#: .\templates\home.html:163 .\templates\login.html:163
+#: .\templates\home.html:163
 msgid "No active budgets"
 msgstr "Нет активных бюджетов"
 
-#: .\templates\home.html:170 .\templates\login.html:170
+#: .\templates\home.html:170
 msgid "Saving Goals"
-msgstr "Цели сбережений"
+msgstr "Цели сбережения"
 
-#: .\templates\home.html:171 .\templates\login.html:171
+#: .\templates\home.html:171
 msgid "Contribute"
 msgstr "Внести"
 
-#: .\templates\home.html:182 .\templates\login.html:182
+#: .\templates\home.html:182
 msgid "No goals yet"
 msgstr "Целей пока нет"
 
@@ -430,18 +565,9 @@ msgstr "Целей пока нет"
 msgid "New Goal"
 msgstr "Новая цель"
 
-#: .\templates\home.html:195
-msgid "Title"
-msgstr "Название"
-
 #: .\templates\home.html:196
 msgid "Target Amount"
 msgstr "Целевая сумма"
-
-#: .\templates\home.html:198 .\templates\home.html:226
-#: .\templates\home.html:245
-msgid "Currency"
-msgstr "Валюта"
 
 #: .\templates\home.html:204
 msgid "Add Goal"
@@ -449,7 +575,7 @@ msgstr "Добавить цель"
 
 #: .\templates\home.html:213
 msgid "Set Budget Plan"
-msgstr "Установить бюджетный план"
+msgstr "Установить бюджет"
 
 #: .\templates\home.html:216
 msgid "Budget Type"
@@ -513,7 +639,39 @@ msgstr "Выберите цель"
 
 #: .\templates\home.html:306
 msgid "Transfer Savings"
-msgstr "Перевести накопления"
+msgstr "Перевести сбережения"
+
+#: .\templates\login.html:8
+msgid "FinanceHome | Sign In"
+msgstr "FinanceHome | Вход"
+
+#: .\templates\login.html:116
+msgid "Welcome Back"
+msgstr "С возвращением"
+
+#: .\templates\login.html:117
+msgid "Manage your wealth smarter."
+msgstr "Управляйте своим капиталом умнее."
+
+#: .\templates\login.html:135 .\templates\register.html:84
+msgid "Password"
+msgstr "Пароль"
+
+#: .\templates\login.html:136
+msgid "Forgot?"
+msgstr "Забыли?"
+
+#: .\templates\login.html:142 .\templates\register.html:101
+msgid "Sign In"
+msgstr "Войти"
+
+#: .\templates\login.html:148
+msgid "Don't have an account?"
+msgstr "Нет аккаунта?"
+
+#: .\templates\login.html:149
+msgid "Sign Up"
+msgstr "Регистрация"
 
 #: .\templates\register.html:8
 msgid "Create Account | FinanceHome"
@@ -521,15 +679,11 @@ msgstr "Создать аккаунт | FinanceHome"
 
 #: .\templates\register.html:66
 msgid "Join Us Today!"
-msgstr "Присоединяйтесь к нам!"
+msgstr "Присоединяйтесь к нам сегодня!"
 
 #: .\templates\register.html:67
 msgid "Start managing your wealth smarter."
 msgstr "Начните управлять своим капиталом умнее."
-
-#: .\templates\register.html:84
-msgid "Password"
-msgstr "Пароль"
 
 #: .\templates\register.html:89
 msgid "Confirm Password"
@@ -547,21 +701,17 @@ msgstr "Создать аккаунт"
 msgid "Already have an account?"
 msgstr "Уже есть аккаунт?"
 
-#: .\templates\register.html:101
-msgid "Sign In"
-msgstr "Войти"
-
 #: .\templates\verify_code.html:8
 msgid "Verify Code | FinanceHome"
 msgstr "Подтверждение кода | FinanceHome"
 
 #: .\templates\verify_code.html:18
 msgid "Verify Code"
-msgstr "Подтвердите код"
+msgstr "Подтвердить код"
 
 #: .\templates\verify_code.html:20
 msgid "Enter the 6-digit code sent to your email. You have 2 minutes."
-msgstr "Введите 6-значный код, отправленный на вашу почту. У вас есть 2 минуты."
+msgstr "Введите 6-значный код, отправленный на ваш Email. У вас есть 2 минуты."
 
 #: .\templates\verify_code.html:32
 msgid "Verification Code"

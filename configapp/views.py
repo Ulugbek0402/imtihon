@@ -7,6 +7,7 @@ from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
 from django.contrib.auth.forms import PasswordChangeForm
+from django.utils.translation import gettext as _
 from decimal import Decimal
 import random
 
@@ -21,10 +22,8 @@ from .serializers import AccountSerializer, TransactionSerializer, GoalSerialize
 
 User = get_user_model()
 
-
 def is_admin(user):
     return user.is_superuser
-
 
 @login_required(login_url='login')
 def home_view(request):
@@ -43,7 +42,7 @@ def home_view(request):
             account=item.account,
             amount=item.amount,
             type=item.type,
-            category=f"Auto: {item.category}"
+            category=_("Auto: %(category)s") % {'category': item.category}
         )
 
         if item.type == 'INCOME':
@@ -103,7 +102,6 @@ def home_view(request):
         'budgets': budget_data,
     })
 
-
 @login_required(login_url='login')
 def add_transaction(request):
     if request.method == "POST":
@@ -114,7 +112,7 @@ def add_transaction(request):
 
         if t_type == 'EXPENSE':
             if account.balance < amount:
-                messages.error(request, "Mablag' yetarli emas!")
+                messages.error(request, _("Mablag' yetarli emas!"))
                 return redirect('home')
 
             today = timezone.now()
@@ -142,7 +140,7 @@ def add_transaction(request):
                 new_conv_amount = (amount / account.currency.rate) * budget.currency.rate
 
                 if (total_spent_in_budget_curr + new_conv_amount) > budget.amount_limit:
-                    messages.warning(request, f"{category} uchun byudjet limitidan oshdingiz!")
+                    messages.warning(request, _("%(category)s uchun byudjet limitidan oshdingiz!") % {'category': category})
 
         if t_type == 'INCOME':
             account.balance += amount
@@ -151,10 +149,9 @@ def add_transaction(request):
 
         account.save()
         Transaction.objects.create(account=account, amount=amount, type=t_type, category=category)
-        messages.success(request, "Tranzaksiya saqlandi!")
+        messages.success(request, _("Tranzaksiya saqlandi!"))
 
     return redirect('home')
-
 
 @login_required(login_url='login')
 def add_account(request):
@@ -165,8 +162,8 @@ def add_account(request):
             balance=Decimal(request.POST.get('balance', '0')),
             currency=get_object_or_404(Currency, id=request.POST.get('currency'))
         )
+        messages.success(request, _("Hisob muvaffaqiyatli qo'shildi!"))
     return redirect('home')
-
 
 @login_required(login_url='login')
 def add_budget(request):
@@ -179,9 +176,8 @@ def add_budget(request):
             amount_limit=Decimal(request.POST.get('limit', '0')),
             currency=currency,
         )
-        messages.success(request, "Byudjet belgilandi!")
+        messages.success(request, _("Byudjet belgilandi!"))
     return redirect('home')
-
 
 @login_required(login_url='login')
 def budget_list(request):
@@ -211,7 +207,6 @@ def budget_list(request):
 
     return render(request, 'budgets.html', {'budget_data': budget_data})
 
-
 @login_required(login_url='login')
 def add_goal(request):
     if request.method == "POST":
@@ -222,9 +217,8 @@ def add_goal(request):
             target_amount=Decimal(request.POST.get('target', '0')),
             currency=currency
         )
-        messages.success(request, "Yangi maqsad qo'shildi!")
+        messages.success(request, _("Yangi maqsad qo'shildi!"))
     return redirect('home')
-
 
 @login_required(login_url='login')
 def contribute_to_goal(request):
@@ -238,7 +232,6 @@ def contribute_to_goal(request):
             account.save()
 
             converted_amount = (amount * account.currency.rate) / goal.currency.rate
-
             goal.current_amount += converted_amount
             goal.save()
 
@@ -246,14 +239,16 @@ def contribute_to_goal(request):
                 account=account,
                 amount=amount,
                 type='EXPENSE',
-                category=f"Goal: {goal.title}"
+                category=_("Goal: %(title)s") % {'title': goal.title}
             )
-            messages.success(request, f"Maqsadga {round(converted_amount, 2)} {goal.currency.code} qo'shildi!")
+            messages.success(request, _("Maqsadga %(amount)s %(code)s qo'shildi!") % {
+                'amount': round(converted_amount, 2),
+                'code': goal.currency.code
+            })
         else:
-            messages.error(request, "Mablag' yetarli emas!")
+            messages.error(request, _("Mablag' yetarli emas!"))
 
     return redirect('home')
-
 
 def login_view(request):
     if request.user.is_authenticated:
@@ -263,9 +258,8 @@ def login_view(request):
         if user:
             login(request, user)
             return redirect('admin_panel') if user.is_superuser else redirect('home')
-        messages.error(request, "Email yoki parol noto'g'ri!")
+        messages.error(request, _("Email yoki parol noto'g'ri!"))
     return render(request, 'login.html')
-
 
 def register_view(request):
     if request.method == "POST":
@@ -276,13 +270,13 @@ def register_view(request):
             user = User.objects.create_user(email=email, password=p, username=email)
             login(request, user)
             return redirect('home')
+        else:
+            messages.error(request, _("Parollar mos kelmadi yoki foydalanuvchi mavjud."))
     return render(request, 'register.html')
-
 
 def logout_view(request):
     logout(request)
     return redirect('login')
-
 
 def forgot_password(request):
     if request.method == "POST":
@@ -293,19 +287,18 @@ def forgot_password(request):
             ResetCode.objects.create(user=user, code=code)
             try:
                 send_mail(
-                    'FinanceHome - Kod',
-                    f'Sizning tasdiqlash kodingiz: {code}',
+                    _('FinanceHome - Tasdiqlash kodi'),
+                    _('Sizning tasdiqlash kodingiz: %(code)s') % {'code': code},
                     settings.EMAIL_HOST_USER,
                     [email]
                 )
-                messages.success(request, "Kod yuborildi!")
+                messages.success(request, _("Kod yuborildi!"))
                 return redirect('verify_code', user_id=user.id)
-            except Exception as e:
-                messages.error(request, "Email yuborishda xatolik yuz berdi.")
+            except Exception:
+                messages.error(request, _("Email yuborishda xatolik yuz berdi."))
         else:
-            messages.error(request, "Foydalanuvchi topilmadi.")
+            messages.error(request, _("Foydalanuvchi topilmadi."))
     return render(request, 'forgot_password.html')
-
 
 def verify_code(request, user_id):
     if request.method == "POST":
@@ -313,9 +306,11 @@ def verify_code(request, user_id):
         if reset and reset.is_valid():
             reset.user.set_password(request.POST.get('password'))
             reset.user.save()
+            messages.success(request, _("Parol muvaffaqiyatli o'zgartirildi!"))
             return redirect('login')
+        else:
+            messages.error(request, _("Kod noto'g'ri yoki muddati o'tgan."))
     return render(request, 'verify_code.html')
-
 
 @login_required(login_url='login')
 def change_password(request):
@@ -324,12 +319,11 @@ def change_password(request):
         if form.is_valid():
             user = form.save()
             update_session_auth_hash(request, user)
-            messages.success(request, "Parol o'zgartirildi!")
+            messages.success(request, _("Parol o'zgartirildi!"))
             return redirect('home')
     else:
         form = PasswordChangeForm(request.user)
     return render(request, 'change_password.html', {'form': form})
-
 
 @login_required(login_url='login')
 def history_view(request):
@@ -340,7 +334,6 @@ def history_view(request):
     if search: transactions = transactions.filter(category__icontains=search)
     return render(request, 'history.html', {'transactions': transactions})
 
-
 @login_required(login_url='login')
 def goals_history(request):
     goal_transactions = Transaction.objects.filter(
@@ -348,7 +341,6 @@ def goals_history(request):
         category__startswith="Goal:"
     ).order_by('-date')
     return render(request, 'goals_history.html', {'transactions': goal_transactions})
-
 
 @login_required(login_url='login')
 @user_passes_test(is_admin)
@@ -361,15 +353,14 @@ def admin_dashboard(request):
         'recent_transactions': Transaction.objects.all().order_by('-date')[:10],
     })
 
-
 @login_required(login_url='login')
 @user_passes_test(is_admin)
 def admin_manage_model(request, model_name):
     maps = {
-        'accounts': (Account, ['User', 'Name', 'Balance', 'Currency']),
-        'transactions': (Transaction, ['Account', 'Amount', 'Type', 'Category']),
-        'currencies': (Currency, ['Name', 'Code', 'Rate']),
-        'goals': (FinancialGoal, ['User', 'Title', 'Target', 'Current'])
+        'accounts': (Account, [_('User'), _('Name'), _('Balance'), _('Currency')]),
+        'transactions': (Transaction, [_('Account'), _('Amount'), _('Type'), _('Category')]),
+        'currencies': (Currency, [_('Name'), _('Code'), _('Rate')]),
+        'goals': (FinancialGoal, [_('User'), _('Title'), _('Target'), _('Current')])
     }
     model, cols = maps.get(model_name)
     return render(request, 'admin_model_list.html', {
@@ -378,98 +369,42 @@ def admin_manage_model(request, model_name):
         'columns': cols
     })
 
-
 @login_required(login_url='login')
 @user_passes_test(is_admin)
 def delete_user(request, user_id):
     User.objects.filter(id=user_id, is_superuser=False).delete()
     return redirect('admin_panel')
 
-
-# ========================
-# REST API ViewSets
-# ========================
-
 @extend_schema_view(
-    list=extend_schema(
-        summary="Barcha hisoblarni olish",
-        description="Foydalanuvchining barcha moliyaviy hisoblarini ro'yxatini qaytaradi",
-        tags=['Accounts']
-    ),
-    create=extend_schema(
-        summary="Yangi hisob yaratish",
-        description="Yangi moliyaviy hisob qo'shish (naqd pul yoki karta)",
-        tags=['Accounts']
-    ),
-    retrieve=extend_schema(summary="Bitta hisobni olish", tags=['Accounts']),
-    update=extend_schema(summary="Hisobni yangilash", tags=['Accounts']),
-    partial_update=extend_schema(summary="Hisobni qisman yangilash", tags=['Accounts']),
-    destroy=extend_schema(summary="Hisobni o'chirish", tags=['Accounts']),
+    list=extend_schema(summary=_("Barcha hisoblarni olish"), tags=['Accounts']),
+    create=extend_schema(summary=_("Yangi hisob yaratish"), tags=['Accounts']),
 )
 class AccountViewSet(viewsets.ModelViewSet):
-    """Moliyaviy hisoblarni boshqarish"""
     serializer_class = AccountSerializer
-
     def get_queryset(self):
         return Account.objects.filter(user=self.request.user)
 
-
 @extend_schema_view(
-    list=extend_schema(
-        summary="Barcha tranzaksiyalarni olish",
-        description="Foydalanuvchining barcha daromad va xarajat tranzaksiyalarini ro'yxatini qaytaradi",
-        tags=['Transactions'],
-        parameters=[
-            OpenApiParameter(
-                name='type',
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.QUERY,
-                description='Tranzaksiya turi (INCOME yoki EXPENSE)',
-                enum=['INCOME', 'EXPENSE']
-            ),
-            OpenApiParameter(
-                name='category',
-                type=OpenApiTypes.STR,
-                location=OpenApiParameter.QUERY,
-                description='Kategoriya bo\'yicha filter'
-            ),
-        ]
-    ),
-    create=extend_schema(summary="Yangi tranzaksiya yaratish", tags=['Transactions']),
-    retrieve=extend_schema(summary="Bitta tranzaksiyani olish", tags=['Transactions']),
-    update=extend_schema(summary="Tranzaksiyani yangilash", tags=['Transactions']),
-    partial_update=extend_schema(summary="Tranzaksiyani qisman yangilash", tags=['Transactions']),
-    destroy=extend_schema(summary="Tranzaksiyani o'chirish", tags=['Transactions']),
+    list=extend_schema(summary=_("Barcha tranzaksiyalarni olish"), tags=['Transactions']),
+    create=extend_schema(summary=_("Yangi tranzaksiya yaratish"), tags=['Transactions']),
 )
 class TransactionViewSet(viewsets.ModelViewSet):
-    """Tranzaksiyalarni boshqarish"""
     serializer_class = TransactionSerializer
-
     def get_queryset(self):
         queryset = Transaction.objects.filter(account__user=self.request.user)
-
         transaction_type = self.request.query_params.get('type', None)
         if transaction_type:
             queryset = queryset.filter(type=transaction_type)
-
         category = self.request.query_params.get('category', None)
         if category:
             queryset = queryset.filter(category__icontains=category)
-
         return queryset.order_by('-date')
 
-
 @extend_schema_view(
-    list=extend_schema(summary="Barcha maqsadlarni olish", tags=['Goals']),
-    create=extend_schema(summary="Yangi maqsad yaratish", tags=['Goals']),
-    retrieve=extend_schema(summary="Bitta maqsadni olish", tags=['Goals']),
-    update=extend_schema(summary="Maqsadni yangilash", tags=['Goals']),
-    partial_update=extend_schema(summary="Maqsadni qisman yangilash", tags=['Goals']),
-    destroy=extend_schema(summary="Maqsadni o'chirish", tags=['Goals']),
+    list=extend_schema(summary=_("Barcha maqsadlarni olish"), tags=['Goals']),
+    create=extend_schema(summary=_("Yangi maqsad yaratish"), tags=['Goals']),
 )
 class GoalViewSet(viewsets.ModelViewSet):
-    """Moliyaviy maqsadlarni boshqarish"""
     serializer_class = GoalSerializer
-
     def get_queryset(self):
         return FinancialGoal.objects.filter(user=self.request.user)
