@@ -49,17 +49,18 @@ python manage.py makemigrations; python manage.py migrate
 ```bash
 python manage.py createsuperuser
 ```
+* email == email
 
 
 ---
 ```bash
-python manage.py shell -c "from configapp.models import Currency; \
-Currency.objects.get_or_create(code='USD', defaults={'name':'US Dollar','symbol':'$','rate':12800}); \
-Currency.objects.get_or_create(code='UZS', defaults={'name':'Oʻzbek soʻmi','symbol':'soʻm','rate':1})"
-"
-
+python manage.py shell 
 ```
+from configapp.models import Currency
 
+Currency.objects.update_or_create(code='UZS', defaults={'name':'Uzbek soʻm','symbol':'soʻm','rate':1});
+Currency.objects.update_or_create(code='USD', defaults={'name':'US Dollar','symbol':'$','rate':12800});
+Currency.objects.update_or_create(code='EUR', defaults={'name':'Russian Ruble','symbol':'₽','rate':140});
 ---
 
 ## 🚀 Loyihani ishga tushirish
@@ -83,5 +84,3 @@ Endi brauzerda `http://127.0.0.1:8000/` manziliga kiring.
 
 ---
 
-Adminni createsuper user qilib qo'shasiz email = email
-* admin@gmail.com
