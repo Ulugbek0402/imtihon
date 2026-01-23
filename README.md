@@ -32,10 +32,7 @@ cd imtihon
 
 ```bash
 python -m venv .venv
-# Windows uchun:
 .venv\Scripts\activate
-# Linux/Mac uchun:
-source .venv/bin/activate
 
 ```
 
@@ -45,6 +42,14 @@ source .venv/bin/activate
 pip install -r requirements.txt
 
 ```
+```bash
+python manage.py makemigrations
+python manage.py migrate
+```
+```bash
+python manage.py migrate
+```
+
 
 ---
 ```bash
