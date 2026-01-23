@@ -42,6 +42,7 @@ INSTALLED_APPS = [
     'configapp',
 
     'rest_framework',
+    'rest_framework.authtoken',
     'drf_spectacular',
 ]
 
@@ -77,16 +78,38 @@ TEMPLATES = [
 WSGI_APPLICATION = 'config.wsgi.application'
 
 REST_FRAMEWORK = {
+    'DEFAULT_AUTHENTICATION_CLASSES': [
+        'rest_framework.authentication.TokenAuthentication',
+    ],
+    'DEFAULT_PERMISSION_CLASSES': [
+        'rest_framework.permissions.IsAuthenticated',
+    ],
     'DEFAULT_SCHEMA_CLASS': 'drf_spectacular.openapi.AutoSchema',
 }
 
 SPECTACULAR_SETTINGS = {
-    'TITLE': 'FinanceHome API',
+    'TITLE': 'Sizning Loyiha API',
+    'DESCRIPTION': 'DIQQAT: Token olishda "username" maydoniga email manzilingizni kiriting.',
     'VERSION': '1.0.0',
     'SERVE_INCLUDE_SCHEMA': False,
-    'COMPONENT_SPLIT_REQUEST': True,
+    'SECURITY': [
+        {'TokenAuth': []}
+    ],
+    'COMPONENT_SPLIT_PATCH': True,
+    'APPEND_COMPONENTS': {
+        'securitySchemes': {
+            'TokenAuth': {
+                'type': 'apiKey',
+                'in': 'header',
+                'name': 'Authorization',
+                'description': 'Tokenni mana bu formatda kiriting: Token <sizning_tokeningiz>'
+            }
+        }
+    },
+    'POSTPROCESSING_HOOKS': [
+        'drf_spectacular.hooks.postprocess_schema_enums',
+    ],
 }
-
 # Database
 # https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
