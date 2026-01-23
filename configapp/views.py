@@ -23,7 +23,6 @@ from .serializers import AccountSerializer, TransactionSerializer, GoalSerialize
 
 User = get_user_model()
 
-
 class HomeView(LoginRequiredMixin, TemplateView):
     template_name = 'home.html'
 
@@ -88,6 +87,47 @@ class HomeView(LoginRequiredMixin, TemplateView):
         })
         return context
 
+class TransactionHistoryView(LoginRequiredMixin, ListView):
+    model = Transaction
+    template_name = 'history.html'
+    context_object_name = 'transactions'
+
+    def get_queryset(self):
+        qs = Transaction.objects.filter(account__user=self.request.user).order_by('-date')
+        t_type = self.request.GET.get('type')
+        search = self.request.GET.get('search')
+        if t_type: qs = qs.filter(type=t_type)
+        if search: qs = qs.filter(category__icontains=search)
+        return qs
+
+class BudgetListView(LoginRequiredMixin, TemplateView):
+    template_name = 'budgets.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        budgets = Budget.objects.filter(user=self.request.user)
+        budget_data = []
+        for budget in budgets:
+            related_transactions = Transaction.objects.filter(
+                account__user=self.request.user, category__iexact=budget.category,
+                type='EXPENSE', date__month=budget.month, date__year=budget.year
+            ).order_by('-date')
+            total_spent = sum((t.amount / t.account.currency.rate) * budget.currency.rate for t in related_transactions)
+            budget_data.append({
+                'info': budget, 'transactions': related_transactions,
+                'total_spent': round(total_spent, 2),
+                'percent': int((total_spent / budget.amount_limit) * 100) if budget.amount_limit > 0 else 0
+            })
+        context['budget_data'] = budget_data
+        return context
+
+class GoalsHistoryView(LoginRequiredMixin, ListView):
+    model = Transaction
+    template_name = 'goals_history.html'
+    context_object_name = 'transactions'
+
+    def get_queryset(self):
+        return Transaction.objects.filter(account__user=self.request.user, category__startswith="Goal:").order_by('-date')
 
 class AddAccountView(LoginRequiredMixin, View):
     def post(self, request):
@@ -97,6 +137,22 @@ class AddAccountView(LoginRequiredMixin, View):
             currency=get_object_or_404(Currency, id=request.POST.get('currency'))
         )
         messages.success(request, "Hisob qo'shildi!")
+        return redirect('home')
+
+class AddTransactionView(LoginRequiredMixin, View):
+    def post(self, request):
+        account = get_object_or_404(Account, id=request.POST.get('account'), user=request.user)
+        amount = Decimal(request.POST.get('amount', '0'))
+        t_type = request.POST.get('type')
+        category = request.POST.get('category').strip()
+        if t_type == 'EXPENSE' and account.balance < amount:
+            messages.error(request, "Mablag' yetarli emas!")
+            return redirect('home')
+        if t_type == 'INCOME': account.balance += amount
+        else: account.balance -= amount
+        account.save()
+        Transaction.objects.create(account=account, amount=amount, type=t_type, category=category)
+        messages.success(request, "Tranzaksiya saqlandi!")
         return redirect('home')
 
 class AddBudgetView(LoginRequiredMixin, View):
@@ -119,11 +175,84 @@ class AddGoalView(LoginRequiredMixin, View):
         )
         return redirect('home')
 
+class ContributeToGoalView(LoginRequiredMixin, View):
+    def post(self, request):
+        goal = get_object_or_404(FinancialGoal, id=request.POST.get('goal'), user=request.user)
+        account = get_object_or_404(Account, id=request.POST.get('account'), user=request.user)
+        amount = Decimal(request.POST.get('amount', '0'))
+        if account.balance >= amount:
+            account.balance -= amount
+            account.save()
+            converted = (amount * account.currency.rate) / goal.currency.rate
+            goal.current_amount += converted
+            goal.save()
+            Transaction.objects.create(account=account, amount=amount, type='EXPENSE', category=f"Goal: {goal.title}")
+            messages.success(request, "Mablag' maqsadga qo'shildi!")
+        return redirect('home')
+
+class LoginView(View):
+    def get(self, request):
+        return render(request, 'login.html')
+    def post(self, request):
+        user = authenticate(request, username=request.POST.get('email'), password=request.POST.get('password'))
+        if user:
+            login(request, user)
+            return redirect('admin_panel' if user.is_superuser else 'home')
+        messages.error(request, "Email yoki parol xato!")
+        return render(request, 'login.html')
+
+class RegisterView(View):
+    def get(self, request): return render(request, 'register.html')
+    def post(self, request):
+        email = request.POST.get('email')
+        p, c = request.POST.get('password'), request.POST.get('confirm_password')
+        if p == c and not User.objects.filter(email=email).exists():
+            user = User.objects.create_user(email=email, password=p, username=email)
+            login(request, user)
+            return redirect('home')
+        return render(request, 'register.html')
+
+class LogoutView(View):
+    def get(self, request):
+        logout(request)
+        return redirect('login')
+
+class ForgotPasswordView(View):
+    def get(self, request): return render(request, 'forgot_password.html')
+    def post(self, request):
+        email = request.POST.get('email')
+        user = User.objects.filter(email=email).first()
+        if user:
+            code = str(random.randint(100000, 999999))
+            ResetCode.objects.create(user=user, code=code)
+            send_mail('FinanceHome - Kod', f'Kod: {code}', settings.EMAIL_HOST_USER, [email])
+            return redirect('verify_code', user_id=user.id)
+        return render(request, 'forgot_password.html')
+
+class VerifyCodeView(View):
+    def get(self, request, user_id): return render(request, 'verify_code.html')
+    def post(self, request, user_id):
+        reset = ResetCode.objects.filter(user_id=user_id, code=request.POST.get('code')).last()
+        if reset and reset.is_valid():
+            reset.user.set_password(request.POST.get('password'))
+            reset.user.save()
+            return redirect('login')
+        return render(request, 'verify_code.html')
+
+class ChangePasswordView(LoginRequiredMixin, View):
+    def get(self, request):
+        return render(request, 'change_password.html', {'form': PasswordChangeForm(request.user)})
+    def post(self, request):
+        form = PasswordChangeForm(request.user, request.POST)
+        if form.is_valid():
+            user = form.save()
+            update_session_auth_hash(request, user)
+            return redirect('home')
+        return render(request, 'change_password.html', {'form': form})
 
 class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
     template_name = 'admin_custom.html'
     def test_func(self): return self.request.user.is_superuser
-
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context.update({
@@ -138,7 +267,6 @@ class DeleteUserView(LoginRequiredMixin, UserPassesTestMixin, View):
     def post(self, request, user_id):
         User.objects.filter(id=user_id, is_superuser=False).delete()
         return redirect('admin_panel')
-
 
 class AccountAPIView(APIView):
     permission_classes = [IsAuthenticated]
@@ -157,3 +285,9 @@ class TransactionAPIView(APIView):
     def get(self, request):
         qs = Transaction.objects.filter(account__user=request.user).order_by('-date')
         return Response(TransactionSerializer(qs, many=True).data)
+
+class GoalAPIView(APIView):
+    permission_classes = [IsAuthenticated]
+    def get(self, request):
+        serializer = GoalSerializer(FinancialGoal.objects.filter(user=request.user), many=True)
+        return Response(serializer.data)
