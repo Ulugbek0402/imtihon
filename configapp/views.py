@@ -1,17 +1,15 @@
 from django.shortcuts import render, redirect, get_object_or_404
 from django.db.models import Sum
 from django.utils import timezone
-from django.contrib.auth import login, authenticate, logout, get_user_model, update_session_auth_hash
-from django.contrib.auth.mixins import LoginRequiredMixin, UserPassesTestMixin
+from django.contrib.auth import login, authenticate, logout, get_user_model
 from django.contrib import messages
 from django.core.mail import send_mail
 from django.conf import settings
-from django.contrib.auth.forms import PasswordChangeForm
-from django.urls import reverse_lazy
 from django.views import View
 from django.views.generic import ListView, TemplateView
 from decimal import Decimal
 import random
+from django.utils.translation import gettext_lazy as _
 
 from rest_framework.views import APIView
 from rest_framework.response import Response
@@ -21,12 +19,14 @@ from rest_framework.permissions import IsAuthenticated
 from .models import Account, Transaction, FinancialGoal, Currency, ResetCode, RecurringTransaction, Budget
 from .serializers import AccountSerializer, TransactionSerializer, GoalSerializer
 
-User = get_user_model()
+User = get_object_or_404(get_user_model()) if False else get_user_model()
 
-class HomeView(LoginRequiredMixin, TemplateView):
+class HomeView(TemplateView):
     template_name = 'home.html'
 
     def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
         if request.user.is_superuser:
             return redirect('admin_panel')
         return super().dispatch(request, *args, **kwargs)
@@ -43,7 +43,7 @@ class HomeView(LoginRequiredMixin, TemplateView):
                 continue
             Transaction.objects.create(
                 account=item.account, amount=item.amount, type=item.type,
-                category=f"Auto: {item.category}"
+                category=f"{_('Auto')}: {item.category}"
             )
             if item.type == 'INCOME': item.account.balance += item.amount
             else: item.account.balance -= item.amount
@@ -87,10 +87,15 @@ class HomeView(LoginRequiredMixin, TemplateView):
         })
         return context
 
-class TransactionHistoryView(LoginRequiredMixin, ListView):
+class TransactionHistoryView(ListView):
     model = Transaction
     template_name = 'history.html'
     context_object_name = 'transactions'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
 
     def get_queryset(self):
         qs = Transaction.objects.filter(account__user=self.request.user).order_by('-date')
@@ -100,8 +105,13 @@ class TransactionHistoryView(LoginRequiredMixin, ListView):
         if search: qs = qs.filter(category__icontains=search)
         return qs
 
-class BudgetListView(LoginRequiredMixin, TemplateView):
+class BudgetListView(TemplateView):
     template_name = 'budgets.html'
+
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -121,62 +131,39 @@ class BudgetListView(LoginRequiredMixin, TemplateView):
         context['budget_data'] = budget_data
         return context
 
-class GoalsHistoryView(LoginRequiredMixin, ListView):
+class GoalsHistoryView(ListView):
     model = Transaction
     template_name = 'goals_history.html'
     context_object_name = 'transactions'
 
+    def dispatch(self, request, *args, **kwargs):
+        if not request.user.is_authenticated:
+            return redirect('login')
+        return super().dispatch(request, *args, **kwargs)
+
     def get_queryset(self):
         return Transaction.objects.filter(account__user=self.request.user, category__startswith="Goal:").order_by('-date')
 
-class AddAccountView(LoginRequiredMixin, View):
+class AddTransactionView(View):
     def post(self, request):
-        Account.objects.create(
-            user=request.user, name=request.POST.get('name'),
-            balance=Decimal(request.POST.get('balance', '0')),
-            currency=get_object_or_404(Currency, id=request.POST.get('currency'))
-        )
-        messages.success(request, "Hisob qo'shildi!")
-        return redirect('home')
-
-class AddTransactionView(LoginRequiredMixin, View):
-    def post(self, request):
+        if not request.user.is_authenticated: return redirect('login')
         account = get_object_or_404(Account, id=request.POST.get('account'), user=request.user)
         amount = Decimal(request.POST.get('amount', '0'))
         t_type = request.POST.get('type')
         category = request.POST.get('category').strip()
         if t_type == 'EXPENSE' and account.balance < amount:
-            messages.error(request, "Mablag' yetarli emas!")
+            messages.error(request, _("Insufficient funds!"))
             return redirect('home')
         if t_type == 'INCOME': account.balance += amount
         else: account.balance -= amount
         account.save()
         Transaction.objects.create(account=account, amount=amount, type=t_type, category=category)
-        messages.success(request, "Tranzaksiya saqlandi!")
+        messages.success(request, _("Transaction saved!"))
         return redirect('home')
 
-class AddBudgetView(LoginRequiredMixin, View):
+class ContributeToGoalView(View):
     def post(self, request):
-        Budget.objects.create(
-            user=request.user, name=request.POST.get('name'),
-            category=request.POST.get('category'),
-            amount_limit=Decimal(request.POST.get('limit', '0')),
-            currency=get_object_or_404(Currency, id=request.POST.get('currency'))
-        )
-        messages.success(request, "Byudjet belgilandi!")
-        return redirect('home')
-
-class AddGoalView(LoginRequiredMixin, View):
-    def post(self, request):
-        FinancialGoal.objects.create(
-            user=request.user, title=request.POST.get('title'),
-            target_amount=Decimal(request.POST.get('target', '0')),
-            currency=get_object_or_404(Currency, id=request.POST.get('currency'))
-        )
-        return redirect('home')
-
-class ContributeToGoalView(LoginRequiredMixin, View):
-    def post(self, request):
+        if not request.user.is_authenticated: return redirect('login')
         goal = get_object_or_404(FinancialGoal, id=request.POST.get('goal'), user=request.user)
         account = get_object_or_404(Account, id=request.POST.get('account'), user=request.user)
         amount = Decimal(request.POST.get('amount', '0'))
@@ -186,19 +173,54 @@ class ContributeToGoalView(LoginRequiredMixin, View):
             converted = (amount * account.currency.rate) / goal.currency.rate
             goal.current_amount += converted
             goal.save()
-            Transaction.objects.create(account=account, amount=amount, type='EXPENSE', category=f"Goal: {goal.title}")
-            messages.success(request, "Mablag' maqsadga qo'shildi!")
+            Transaction.objects.create(account=account, amount=amount, type='EXPENSE', category=f"{_('Goal')}: {goal.title}")
+            messages.success(request, _("Funds added to goal!"))
+        else:
+            messages.error(request, _("Insufficient funds!"))
+        return redirect('home')
+
+class AddAccountView(View):
+    def post(self, request):
+        if not request.user.is_authenticated: return redirect('login')
+        Account.objects.create(
+            user=request.user, name=request.POST.get('name'),
+            balance=Decimal(request.POST.get('balance', '0')),
+            currency=get_object_or_404(Currency, id=request.POST.get('currency'))
+        )
+        messages.success(request, _("Account added successfully!"))
+        return redirect('home')
+
+class AddBudgetView(View):
+    def post(self, request):
+        if not request.user.is_authenticated: return redirect('login')
+        Budget.objects.create(
+            user=request.user, name=request.POST.get('name'),
+            category=request.POST.get('category'),
+            amount_limit=Decimal(request.POST.get('limit', '0')),
+            currency=get_object_or_404(Currency, id=request.POST.get('currency'))
+        )
+        messages.success(request, _("Budget created!"))
+        return redirect('home')
+
+class AddGoalView(View):
+    def post(self, request):
+        if not request.user.is_authenticated: return redirect('login')
+        FinancialGoal.objects.create(
+            user=request.user, title=request.POST.get('title'),
+            target_amount=Decimal(request.POST.get('target', '0')),
+            currency=get_object_or_404(Currency, id=request.POST.get('currency'))
+        )
+        messages.success(request, _("Goal added!"))
         return redirect('home')
 
 class LoginView(View):
-    def get(self, request):
-        return render(request, 'login.html')
+    def get(self, request): return render(request, 'login.html')
     def post(self, request):
         user = authenticate(request, username=request.POST.get('email'), password=request.POST.get('password'))
         if user:
             login(request, user)
             return redirect('admin_panel' if user.is_superuser else 'home')
-        messages.error(request, "Email yoki parol xato!")
+        messages.error(request, _("Invalid email or password!"))
         return render(request, 'login.html')
 
 class RegisterView(View):
@@ -210,6 +232,7 @@ class RegisterView(View):
             user = User.objects.create_user(email=email, password=p, username=email)
             login(request, user)
             return redirect('home')
+        messages.error(request, _("Passwords do not match or user already exists!"))
         return render(request, 'register.html')
 
 class LogoutView(View):
@@ -225,8 +248,9 @@ class ForgotPasswordView(View):
         if user:
             code = str(random.randint(100000, 999999))
             ResetCode.objects.create(user=user, code=code)
-            send_mail('FinanceHome - Kod', f'Kod: {code}', settings.EMAIL_HOST_USER, [email])
+            send_mail(_('Reset Code'), f"{_('Your verification code')}: {code}", settings.EMAIL_HOST_USER, [email])
             return redirect('verify_code', user_id=user.id)
+        messages.error(request, _("User with this email not found!"))
         return render(request, 'forgot_password.html')
 
 class VerifyCodeView(View):
@@ -236,36 +260,28 @@ class VerifyCodeView(View):
         if reset and reset.is_valid():
             reset.user.set_password(request.POST.get('password'))
             reset.user.save()
+            messages.success(request, _("Password updated!"))
             return redirect('login')
+        messages.error(request, _("Invalid code!"))
         return render(request, 'verify_code.html')
 
-class ChangePasswordView(LoginRequiredMixin, View):
+class AdminDashboardView(View):
     def get(self, request):
-        return render(request, 'change_password.html', {'form': PasswordChangeForm(request.user)})
-    def post(self, request):
-        form = PasswordChangeForm(request.user, request.POST)
-        if form.is_valid():
-            user = form.save()
-            update_session_auth_hash(request, user)
-            return redirect('home')
-        return render(request, 'change_password.html', {'form': form})
-
-class AdminDashboardView(LoginRequiredMixin, UserPassesTestMixin, TemplateView):
-    template_name = 'admin_custom.html'
-    def test_func(self): return self.request.user.is_superuser
-    def get_context_data(self, **kwargs):
-        context = super().get_context_data(**kwargs)
-        context.update({
+        if not request.user.is_authenticated or not request.user.is_superuser:
+            return redirect('login')
+        context = {
             'total_users': User.objects.filter(is_superuser=False).count(),
             'users_list': User.objects.filter(is_superuser=False).prefetch_related('account_set'),
             'recent_transactions': Transaction.objects.all().order_by('-date')[:10],
-        })
-        return context
+        }
+        return render(request, 'admin_custom.html', context)
 
-class DeleteUserView(LoginRequiredMixin, UserPassesTestMixin, View):
-    def test_func(self): return self.request.user.is_superuser
+class DeleteUserView(View):
     def post(self, request, user_id):
+        if not request.user.is_authenticated or not request.user.is_superuser:
+            return redirect('login')
         User.objects.filter(id=user_id, is_superuser=False).delete()
+        messages.success(request, _("User deleted successfully!"))
         return redirect('admin_panel')
 
 class AccountAPIView(APIView):
