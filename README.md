@@ -78,3 +78,9 @@ Endi brauzerda `http://127.0.0.1:8000/` manziliga kiring.
 * `templates/home.html` - Dashboard dizayni (Inter font, Chart.js).
 * `templates/login.html` - Ko'p tilli login sahifasi.
 * `locale/` - Tarjima fayllari (`uz`, `ru`, `en`).
+
+---
+
+* `user` - udavlatboyev2@gmail.com
+* `admin` - admin@gmail.com
+* ` ALL password` - 123
