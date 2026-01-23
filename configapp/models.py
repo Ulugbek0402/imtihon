@@ -36,6 +36,8 @@ class ResetCode(models.Model):
 
 class Currency(models.Model):
     code = models.CharField(max_length=3, unique=True)
+    name = models.CharField(max_length=100, default='')
+    symbol = models.CharField(max_length=10, default='')
     rate = models.DecimalField(max_digits=15, decimal_places=2)
 
     def __str__(self):

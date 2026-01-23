@@ -81,6 +81,5 @@ Endi brauzerda `http://127.0.0.1:8000/` manziliga kiring.
 
 ---
 
-* `user` - udavlatboyev2@gmail.com
-* `admin` - admin@gmail.com
-* ` ALL password` - 123
+Adminni createsuper user qilib qo'shasiz email = email
+* admin@gmail.com
