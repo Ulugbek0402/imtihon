@@ -1,15 +1,13 @@
 from rest_framework import serializers
 from .models import User, Account, Transaction, FinancialGoal, Currency
 
-class UserSerializer(serializers.ModelSerializer):
-    class Meta:
-        model = User
-        fields = ['id', 'email', 'username']
 
 class CurrencySerializer(serializers.ModelSerializer):
+
     class Meta:
         model = Currency
         fields = ['id', 'code', 'rate']
+
 
 class AccountSerializer(serializers.ModelSerializer):
     currency_code = serializers.CharField(source='currency.code', read_only=True)
@@ -18,14 +16,28 @@ class AccountSerializer(serializers.ModelSerializer):
         model = Account
         fields = ['id', 'name', 'type', 'balance', 'currency', 'currency_code']
 
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
+
+
 class TransactionSerializer(serializers.ModelSerializer):
+    account_name = serializers.CharField(source='account.name', read_only=True)
+
     class Meta:
         model = Transaction
-        fields = ['id', 'account', 'amount', 'type', 'category', 'date']
+        fields = ['id', 'account', 'account_name', 'amount', 'type', 'category', 'date']
+        read_only_fields = ['date']
+
 
 class GoalSerializer(serializers.ModelSerializer):
     progress_percent = serializers.IntegerField(source='get_progress_percent', read_only=True)
+    currency_code = serializers.CharField(source='currency.code', read_only=True)
 
     class Meta:
         model = FinancialGoal
-        fields = ['id', 'title', 'target_amount', 'current_amount', 'currency', 'progress_percent']
+        fields = ['id', 'title', 'target_amount', 'current_amount', 'currency', 'currency_code', 'progress_percent']
+
+    def create(self, validated_data):
+        validated_data['user'] = self.context['request'].user
+        return super().create(validated_data)
