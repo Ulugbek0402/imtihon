@@ -98,25 +98,25 @@
     <h4 class="fw-bold mb-4">{% trans "Database Management" %}</h4>
     <div class="row g-4 mb-5">
         <div class="col-md-3">
-            <a href="{% url 'admin_manage' 'accounts' %}" class="module-btn">
+            <a href="{% url 'admin_manage_model' 'accounts' %}" class="module-btn">
                 <i class="bi bi-bank"></i>
                 <h5>{% trans "Accounts" %}</h5>
             </a>
         </div>
         <div class="col-md-3">
-            <a href="{% url 'admin_manage' 'currencies' %}" class="module-btn">
+            <a href="{% url 'admin_manage_model' 'currencies' %}" class="module-btn">
                 <i class="bi bi-coin"></i>
                 <h5>{% trans "Currencies" %}</h5>
             </a>
         </div>
         <div class="col-md-3">
-            <a href="{% url 'admin_manage' 'transactions' %}" class="module-btn">
+            <a href="{% url 'admin_manage_model' 'transactions' %}" class="module-btn">
                 <i class="bi bi-receipt"></i>
                 <h5>{% trans "Transactions" %}</h5>
             </a>
         </div>
         <div class="col-md-3">
-            <a href="{% url 'admin_manage' 'goals' %}" class="module-btn">
+            <a href="{% url 'admin_manage_model' 'goals' %}" class="module-btn">
                 <i class="bi bi-flag"></i>
                 <h5>{% trans "Goals" %}</h5>
             </a>
