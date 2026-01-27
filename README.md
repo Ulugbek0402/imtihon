@@ -60,7 +60,7 @@ from configapp.models import Currency
 
 Currency.objects.update_or_create(code='UZS', defaults={'name':'Uzbek soʻm','symbol':'soʻm','rate':1});
 Currency.objects.update_or_create(code='USD', defaults={'name':'US Dollar','symbol':'$','rate':12800});
-Currency.objects.update_or_create(code='EUR', defaults={'name':'Russian Ruble','symbol':'₽','rate':140});
+Currency.objects.update_or_create(code='RUB', defaults={'name':'Russian Ruble','symbol':'₽','rate':140});
 ---
 
 ## 🚀 Loyihani ishga tushirish
